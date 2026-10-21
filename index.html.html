@@ -1,0 +1,1854 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Späti Gonzales – Dein Alles-Besorger</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        display: ['"Fredoka"', 'sans-serif'],
+                    },
+                    colors: {
+                        night: {
+                            900: '#0B0C14',
+                            800: '#131524',
+                            700: '#1E2138',
+                        },
+                        fiesta: {
+                            orange: '#FF5E1A',
+                            yellow: '#FFB800',
+                            lime: '#00E575',
+                            pink: '#FF2A85',
+                            purple: '#7B2CBF'
+                        }
+                    },
+                    animation: {
+                        'float': 'float 3.5s ease-in-out infinite',
+                        'pulse-glow': 'pulseGlow 2.5s infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
+                            '50%': { transform: 'translateY(-6px) rotate(1.5deg)' },
+                        },
+                        pulseGlow: {
+                            '0%, 100%': { boxShadow: '0 0 20px rgba(255, 94, 26, 0.35)' },
+                            '50%': { boxShadow: '0 0 35px rgba(255, 184, 0, 0.65)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #0B0C14;
+            color: #F8FAFC;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .ambient-bg {
+            background: 
+                radial-gradient(circle at 15% 10%, rgba(255, 94, 26, 0.16) 0%, transparent 45%),
+                radial-gradient(circle at 85% 25%, rgba(255, 184, 0, 0.12) 0%, transparent 45%),
+                radial-gradient(circle at 50% 90%, rgba(0, 229, 117, 0.1) 0%, transparent 50%);
+        }
+        .glass-card {
+            background: rgba(24, 27, 46, 0.78);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.09);
+        }
+        .glass-input {
+            background: rgba(11, 12, 20, 0.75);
+            border: 1.5px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.25s ease;
+        }
+        .glass-input:focus {
+            border-color: #FFB800;
+            box-shadow: 0 0 0 3px rgba(255, 184, 0, 0.2);
+            outline: none;
+            background: rgba(15, 17, 29, 0.95);
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="ambient-bg min-h-screen pb-10">
+
+    <div class="sticky top-0 z-50 backdrop-blur-xl bg-night-900/80 border-b border-white/10 px-2 py-2.5">
+        <div class="max-w-md mx-auto flex items-center justify-between gap-1 bg-night-800 p-1 rounded-2xl border border-white/5">
+            <button onclick="switchTab('app')" id="tab-app" class="flex-1 py-2 px-1.5 rounded-xl text-[11px] font-bold transition-all flex items-center justify-center gap-1 bg-gradient-to-r from-fiesta-orange to-fiesta-yellow text-night-900 shadow-lg">
+                <i class="fa-solid fa-couch"></i> Bestellen
+            </button>
+            <button onclick="switchTab('tracker')" id="tab-tracker" class="flex-1 py-2 px-1.5 rounded-xl text-[11px] font-semibold text-slate-300 hover:text-white transition-all flex items-center justify-center gap-1 relative">
+                <span class="w-2 h-2 rounded-full bg-fiesta-lime animate-ping absolute top-1.5 right-2"></span>
+                <span class="w-2 h-2 rounded-full bg-fiesta-lime absolute top-1.5 right-2"></span>
+                <i class="fa-solid fa-location-crosshairs text-fiesta-lime"></i> Live-Radar
+            </button>
+            <button onclick="switchTab('card')" id="tab-card" class="flex-1 py-2 px-1.5 rounded-xl text-[11px] font-semibold text-slate-300 hover:text-white transition-all flex items-center justify-center gap-1">
+                <i class="fa-solid fa-qrcode text-fiesta-yellow"></i> QR-Karte
+            </button>
+            <button onclick="switchTab('chef')" id="tab-chef" class="flex-1 py-2 px-1.5 rounded-xl text-[11px] font-semibold text-slate-300 hover:text-white transition-all flex items-center justify-center gap-1" title="Chef-Einstellungen">
+                <i class="fa-solid fa-gear text-fiesta-orange"></i> Chef-Menü
+            </button>
+        </div>
+    </div>
+
+    <main id="view-app" class="max-w-md mx-auto px-4 pt-4 space-y-5">
+
+        <div class="relative glass-card rounded-3xl p-5 text-center overflow-hidden shadow-2xl">
+            <div class="absolute top-3 left-5 text-fiesta-yellow/40 text-xs animate-pulse"><i class="fa-solid fa-star"></i></div>
+            <div class="absolute top-8 right-6 text-fiesta-orange/40 text-sm animate-pulse"><i class="fa-solid fa-bolt"></i></div>
+            
+            <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs font-bold mb-3">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                <span class="w-2 h-2 rounded-full bg-emerald-400 -ml-4"></span>
+                <span id="status-badge-text">Späti Gonzales ist wach & startklar!</span>
+            </div>
+
+            <!-- LOGO DISPLAY -->
+            <div class="relative w-64 h-64 mx-auto my-1 group">
+                <img id="custom-user-logo-img" src="späti logo.jpg" alt="Späti Gonzales - Der Alles-Besorger" 
+                     class="w-full h-full object-contain drop-shadow-[0_14px_28px_rgba(255,94,26,0.45)] animate-float rounded-2xl hidden"
+                     onload="this.classList.remove('hidden'); document.getElementById('custom-user-logo-svg').classList.add('hidden');"
+                     onerror="this.classList.add('hidden'); document.getElementById('custom-user-logo-svg').classList.remove('hidden');">
+
+                <div id="custom-user-logo-svg" class="w-full h-full animate-float">
+                    <svg viewBox="0 0 320 310" class="w-full h-full drop-shadow-[0_14px_30px_rgba(255,94,26,0.45)]" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="ringOuter" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#FFB800" />
+                                <stop offset="50%" stop-color="#FF5E1A" />
+                                <stop offset="100%" stop-color="#D9230F" />
+                            </linearGradient>
+                            <linearGradient id="textGold" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stop-color="#FFF380" />
+                                <stop offset="45%" stop-color="#FFB800" />
+                                <stop offset="100%" stop-color="#FF4500" />
+                            </linearGradient>
+                            <linearGradient id="skinTone" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#F6C39E" />
+                                <stop offset="100%" stop-color="#D99568" />
+                            </linearGradient>
+                            <linearGradient id="jeansGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#3B82F6" />
+                                <stop offset="100%" stop-color="#1E3A8A" />
+                            </linearGradient>
+                        </defs>
+
+                        <circle cx="160" cy="142" r="118" fill="#12131A" stroke="url(#ringOuter)" stroke-width="8"/>
+                        <circle cx="160" cy="142" r="108" fill="#FAF6F0" stroke="#FFB800" stroke-width="3.5"/>
+
+                        <g stroke="#27272A" stroke-width="2" opacity="0.35" stroke-linecap="round">
+                            <line x1="62" y1="88" x2="120" y2="68" />
+                            <line x1="54" y1="112" x2="115" y2="92" />
+                            <line x1="52" y1="135" x2="105" y2="118" />
+                            <line x1="215" y1="138" x2="262" y2="128" />
+                            <line x1="210" y1="158" x2="265" y2="152" />
+                        </g>
+
+                        <g fill="#D6C7B2" stroke="#4A3F35" stroke-width="2.5">
+                            <circle cx="78" cy="165" r="22"/>
+                            <circle cx="95" cy="192" r="26"/>
+                            <circle cx="68" cy="195" r="18"/>
+                            <circle cx="235" cy="190" r="22"/>
+                            <circle cx="215" cy="205" r="24"/>
+                            <circle cx="248" cy="168" r="16"/>
+                        </g>
+
+                        <g transform="translate(132, 68) rotate(-28)">
+                            <ellipse cx="0" cy="0" rx="42" ry="14" fill="#FFB800" stroke="#451A03" stroke-width="3"/>
+                            <path d="M-22 -4 C-18 -28, 18 -28, 22 -4 Z" fill="#F59E0B" stroke="#451A03" stroke-width="3"/>
+                            <path d="M-28 0 L-18 -5 L-8 2 L2 -5 L12 2 L22 -5 L30 0" stroke="#00E575" stroke-width="3" fill="none"/>
+                            <path d="M-32 4 Q0 12 32 4" stroke="#E11D48" stroke-width="3.5" fill="none"/>
+                        </g>
+
+                        <g stroke="#1E1B4B" stroke-width="3" stroke-linejoin="round">
+                            <path d="M145 170 L118 192 L132 208 L162 184 Z" fill="url(#jeansGrad)"/>
+                            <path d="M152 166 L192 178 L184 214 L165 210 L170 188 L142 182 Z" fill="url(#jeansGrad)"/>
+                            <rect x="104" y="188" width="24" height="12" rx="5" transform="rotate(-35 104 188)" fill="#1E293B"/>
+                            <rect x="102" y="196" width="26" height="5" rx="2" transform="rotate(-35 102 196)" fill="#FFFFFF"/>
+                            <path d="M174 208 H206 C210 208, 212 218, 204 220 H172 Z" fill="#1E293B"/>
+                            <rect x="172" y="216" width="36" height="6" rx="3" fill="#FFFFFF"/>
+                            <path d="M182 212 L192 215" stroke="#EF4444" stroke-width="3"/>
+                        </g>
+
+                        <path d="M118 102 C138 88, 175 94, 196 112 L212 146 L194 156 L182 128 L172 170 L138 168 L144 124 L118 148 L102 136 Z" 
+                              fill="#F8FAFC" stroke="#1E293B" stroke-width="3.2" stroke-linejoin="round"/>
+
+                        <g transform="translate(88, 158) rotate(-22)">
+                            <rect x="-26" y="0" width="52" height="38" rx="7" fill="#E11D48" stroke="#27272A" stroke-width="3.2"/>
+                            <path d="M-10 0 V-7 H10 V0" fill="none" stroke="#27272A" stroke-width="3.5"/>
+                            <rect x="-4" y="9" width="8" height="20" rx="1.5" fill="#FFFFFF"/>
+                            <rect x="-10" y="15" width="20" height="8" rx="1.5" fill="#FFFFFF"/>
+                        </g>
+
+                        <g transform="translate(136, 136)">
+                            <rect x="-12" y="0" width="32" height="34" rx="3" fill="#C88A3B" stroke="#27272A" stroke-width="2.5"/>
+                            <path d="M16 -8 L20 -24 H34 L38 -8 Z" fill="#EF4444" stroke="#27272A" stroke-width="2.2"/>
+                            <rect x="18" y="-27" width="18" height="4" rx="1.5" fill="#FFFFFF" stroke="#27272A" stroke-width="1.5"/>
+                            <rect x="16" y="2" width="18" height="20" rx="2" fill="#DC2626" stroke="#27272A" stroke-width="2.2"/>
+                            <path d="M18 2 V-6 M22 2 V-8 M26 2 V-5 M30 2 V-7" stroke="#FACC15" stroke-width="3" stroke-linecap="round"/>
+                            <circle cx="4" cy="22" r="12" fill="#F59E0B" stroke="#27272A" stroke-width="2.5"/>
+                            <path d="M-8 22 H16" stroke="#22C55E" stroke-width="3"/>
+                            <path d="M-8 25 H16" stroke="#78350F" stroke-width="4"/>
+                        </g>
+
+                        <g transform="translate(202, 134) rotate(14)">
+                            <ellipse cx="-4" cy="-18" rx="9" ry="26" transform="rotate(-12)" fill="#F59E0B" stroke="#451A03" stroke-width="2.8"/>
+                            <ellipse cx="10" cy="-16" rx="9" ry="26" transform="rotate(8)" fill="#D97706" stroke="#451A03" stroke-width="2.8"/>
+                            <rect x="-18" y="-2" width="40" height="46" rx="4" fill="#D49B54" stroke="#27272A" stroke-width="3"/>
+                            <circle cx="14" cy="20" r="8" fill="url(#skinTone)" stroke="#27272A" stroke-width="2.5"/>
+                        </g>
+
+                        <g transform="translate(174, 66)">
+                            <rect x="-10" y="24" width="18" height="16" rx="4" fill="url(#skinTone)" stroke="#27272A" stroke-width="2.5"/>
+                            <path d="M-18 -8 C-18 -26, 22 -26, 22 -4 C24 14, 16 32, 2 34 C-12 34, -18 18, -18 -8 Z" 
+                                  fill="url(#skinTone)" stroke="#27272A" stroke-width="3"/>
+                            <ellipse cx="-18" cy="8" rx="5" ry="8" fill="url(#skinTone)" stroke="#27272A" stroke-width="2.5"/>
+                            <path d="M-20 -6 C-24 -26, -4 -36, 18 -30 C28 -26, 26 -12, 22 -6 C16 -14, -4 -16, -16 -6 Z" 
+                                  fill="#271810" stroke="#120A06" stroke-width="2.5"/>
+                            <path d="M-6 0 L6 3 M12 3 L20 0" stroke="#1F120B" stroke-width="3.2" stroke-linecap="round"/>
+                            <circle cx="1" cy="7" r="2.6" fill="#1F120B"/>
+                            <circle cx="15" cy="7" r="2.6" fill="#1F120B"/>
+                            <path d="M9 7 L13 16 L6 17" fill="none" stroke="#8C5230" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M-15 10 C-14 24, -4 34, 6 34 C16 34, 21 24, 21 15 C18 20, 14 21, 6 21 C-2 21, -8 18, -15 10 Z" 
+                                  fill="#3A2314" stroke="#1F120B" stroke-width="2"/>
+                            <path d="M2 25 H12" stroke="#F8FAFC" stroke-width="2.2" stroke-linecap="round"/>
+                        </g>
+
+                        <path d="M32 222 Q160 205 288 222 L276 268 Q255 298 160 298 Q65 298 44 268 Z" 
+                              fill="#14141B" stroke="url(#ringOuter)" stroke-width="5" stroke-linejoin="round"/>
+                        <text x="148" y="218" text-anchor="middle" font-family="'Fredoka', cursive, sans-serif" font-style="italic" font-weight="800" font-size="34" fill="url(#textGold)" stroke="#270900" stroke-width="6" paint-order="stroke">
+                            Späti
+                        </text>
+                        <text x="160" y="260" text-anchor="middle" font-family="'Fredoka', 'Plus Jakarta Sans', sans-serif" font-weight="900" font-size="44" letter-spacing="1" fill="url(#textGold)" stroke="#7F1D1D" stroke-width="8" paint-order="stroke">
+                            GONZALES
+                        </text>
+                        <text x="160" y="285" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="15.5" letter-spacing="1.5" fill="#FFFFFF">
+                            DER ALLES-BESORGER
+                        </text>
+                    </svg>
+                </div>
+
+                <label for="logo-file-input" class="cursor-pointer absolute -bottom-1 right-2 bg-night-800/90 hover:bg-fiesta-orange hover:text-night-900 text-slate-300 border border-white/15 px-2.5 py-1 rounded-full text-[10px] font-bold shadow-lg transition flex items-center gap-1" title="Original-Logo-Datei auswählen">
+                    <i class="fa-solid fa-image"></i> Original-Bild laden
+                </label>
+                <input type="file" id="logo-file-input" accept="image/*" class="hidden" onchange="handleCustomLogoUpload(event)">
+            </div>
+
+            <p class="text-slate-300 text-sm mt-2 font-medium leading-relaxed">
+                Kein Lager. Kein Limit. <span class="text-fiesta-yellow font-bold">Dein persönlicher Alles-Besorger!</span><br>
+                Unterwegs in <strong class="text-white">Holzminden, Höxter, Godelheim, Neuhaus, Polle, Heinsen, Brevörde, Brakel & allen Dörfern dazwischen!</strong> 🛋️💨
+            </p>
+
+            <div class="grid grid-cols-3 gap-2 mt-4 pt-4 border-t border-white/10 text-xs">
+                <div class="bg-night-900/60 rounded-2xl p-2.5 border border-white/5">
+                    <div class="text-lg mb-0.5">📝</div>
+                    <div class="font-bold text-white">1. Aufschreiben</div>
+                    <div class="text-slate-400 text-[11px]">Was du brauchst</div>
+                </div>
+                <div class="bg-night-900/60 rounded-2xl p-2.5 border border-white/5">
+                    <div class="text-lg mb-0.5">🏪</div>
+                    <div class="font-bold text-white">2. Woher?</div>
+                    <div class="text-slate-400 text-[11px]">Laden wählen</div>
+                </div>
+                <div class="bg-night-900/60 rounded-2xl p-2.5 border border-white/5">
+                    <div class="text-lg mb-0.5">🛵</div>
+                    <div class="font-bold text-white">3. Zurücklehnen</div>
+                    <div class="text-slate-400 text-[11px]">Ich bring's dir</div>
+                </div>
+            </div>
+        </div>
+
+        <form id="order-form" onsubmit="handleOrderSubmit(event)" class="glass-card rounded-3xl p-5 space-y-5 shadow-2xl relative overflow-hidden">
+            
+            <!-- WISHLIST FIRST -->
+            <div class="space-y-2.5">
+                <div class="flex items-center justify-between">
+                    <label for="wishlist" class="flex items-center gap-2 text-base font-bold text-white">
+                        <span class="w-7 h-7 rounded-xl bg-gradient-to-br from-fiesta-orange to-fiesta-yellow text-night-900 flex items-center justify-center font-display text-sm font-bold shadow">1</span>
+                        Dein Wunschzettel
+                    </label>
+                    <button type="button" onclick="toggleVoiceDictation()" id="voice-btn" class="text-[11px] font-bold text-fiesta-lime bg-fiesta-lime/15 hover:bg-fiesta-lime/25 px-3 py-1 rounded-full border border-fiesta-lime/30 flex items-center gap-1.5 transition active:scale-95">
+                        <i class="fa-solid fa-microphone"></i>
+                        <span id="voice-btn-text">Einsprechen statt tippen</span>
+                    </button>
+                </div>
+
+                <div class="flex gap-1.5 overflow-x-auto no-scrollbar pb-1 pt-0.5">
+                    <button type="button" onclick="addQuickItem('🥤 Eiskalte Cola / Limo')" class="shrink-0 text-xs bg-night-800 hover:bg-night-700 active:scale-95 text-slate-200 border border-white/10 rounded-xl px-3 py-1.5 transition flex items-center gap-1">
+                        🥤 Kalte Drinks
+                    </button>
+                    <button type="button" onclick="addQuickItem('🥔 1x Chips & Knabberkram')" class="shrink-0 text-xs bg-night-800 hover:bg-night-700 active:scale-95 text-slate-200 border border-white/10 rounded-xl px-3 py-1.5 transition flex items-center gap-1">
+                        🥔 Chips & Snacks
+                    </button>
+                    <button type="button" onclick="addQuickItem('🥙 Döner / Fast Food')" class="shrink-0 text-xs bg-night-800 hover:bg-night-700 active:scale-95 text-slate-200 border border-white/10 rounded-xl px-3 py-1.5 transition flex items-center gap-1">
+                        🥙 Döner / Burger
+                    </button>
+                    <button type="button" onclick="addQuickItem('🥖 Frische Brötchen / Baguette')" class="shrink-0 text-xs bg-night-800 hover:bg-night-700 active:scale-95 text-slate-200 border border-white/10 rounded-xl px-3 py-1.5 transition flex items-center gap-1">
+                        🥖 Bäcker / Baguette
+                    </button>
+                    <button type="button" onclick="addQuickItem('🍫 Schokolade / Eis')" class="shrink-0 text-xs bg-night-800 hover:bg-night-700 active:scale-95 text-slate-200 border border-white/10 rounded-xl px-3 py-1.5 transition flex items-center gap-1">
+                        🍫 Süßes & Eis
+                    </button>
+                    <button type="button" onclick="addQuickItem('🩹 Notfall-Apotheke / Drogerie')" class="shrink-0 text-xs bg-night-800 hover:bg-night-700 active:scale-95 text-slate-200 border border-white/10 rounded-xl px-3 py-1.5 transition flex items-center gap-1">
+                        🩹 Retter-Koffer
+                    </button>
+                </div>
+
+                <div class="relative">
+                    <textarea 
+                        id="wishlist" 
+                        rows="4" 
+                        required
+                        placeholder="Schreib einfach rein, worauf du Bock hast...&#10;z.B.:&#10;- 2x Red Bull (bitte eiskalt!)&#10;- 1x Cheeseburger & große Pommes&#10;- 1x Packung Kopfschmerztabletten"
+                        class="w-full rounded-2xl p-3.5 text-sm text-white placeholder-slate-400 glass-input leading-relaxed resize-none"
+                    ></textarea>
+                    <button type="button" onclick="clearWishlist()" id="clear-btn" class="hidden absolute bottom-3 right-3 text-xs text-slate-400 hover:text-rose-400 bg-night-800/90 px-2 py-1 rounded-lg border border-white/10">
+                        Leeren
+                    </button>
+                </div>
+            </div>
+
+            <!-- STOPWATCH CHALLENGE PLACED RIGHT BELOW THE WISHLIST -->
+            <div class="glass-card rounded-3xl p-4 border border-fiesta-yellow/40 shadow-2xl relative overflow-hidden">
+                <div class="absolute -right-10 -top-10 w-32 h-32 bg-fiesta-yellow/15 rounded-full blur-2xl pointer-events-none"></div>
+                <div class="absolute -left-10 -bottom-10 w-32 h-32 bg-fiesta-orange/15 rounded-full blur-2xl pointer-events-none"></div>
+
+                <div class="flex items-center justify-between mb-2.5">
+                    <div class="flex items-center gap-2">
+                        <span class="px-2.5 py-0.5 rounded-full bg-gradient-to-r from-fiesta-orange to-fiesta-yellow text-night-900 text-[10px] font-extrabold uppercase tracking-wider shadow">
+                            ⚡ Reaktions-Zock
+                        </span>
+                        <span class="text-xs font-bold text-white">Triff exakt <span class="text-fiesta-yellow">10,00 Sek.</span>!</span>
+                    </div>
+                    <span id="challenge-attempt-badge" class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-white/10 text-slate-300 border border-white/10">
+                        🎯 1 Versuch frei
+                    </span>
+                </div>
+
+                <p class="text-xs text-slate-300 leading-relaxed mb-3">
+                    Stoppe den Timer genau bei <strong class="text-fiesta-yellow">10,00 Sekunden</strong> und staube <strong class="text-fiesta-lime" id="challenge-prize-text">1x Eiskalte Gratis-Cola (oder 2,00 € Rabatt)</strong> zu deiner Bestellung ab!
+                </p>
+
+                <div class="bg-night-900/95 border-2 border-white/10 rounded-2xl p-3.5 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-inner" id="stopwatch-arena">
+                    <div class="text-center sm:text-left">
+                        <div class="text-[10px] uppercase tracking-widest text-slate-400 font-bold">Gonzales-Stoppuhr</div>
+                        <div id="stopwatch-display" class="font-mono text-3xl sm:text-4xl font-black tracking-wider text-fiesta-yellow drop-shadow-[0_0_15px_rgba(255,184,0,0.45)]">
+                            00,00
+                        </div>
+                    </div>
+
+                    <button 
+                        type="button" 
+                        id="stopwatch-btn" 
+                        onclick="handleStopwatchAction()" 
+                        class="w-full sm:w-auto min-w-[145px] py-3 px-5 rounded-2xl font-display font-bold text-sm bg-gradient-to-r from-fiesta-lime to-emerald-400 text-night-900 shadow-xl hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-2"
+                    >
+                        <i class="fa-solid fa-play" id="stopwatch-btn-icon"></i>
+                        <span id="stopwatch-btn-text">Timer starten!</span>
+                    </button>
+                </div>
+
+                <div id="stopwatch-result-box" class="hidden mt-3 p-3 rounded-2xl text-xs font-bold text-center border transition-all"></div>
+            </div>
+
+            <div class="space-y-2.5 pt-1">
+                <label for="store" class="flex items-center gap-2 text-base font-bold text-white">
+                    <span class="w-7 h-7 rounded-xl bg-gradient-to-br from-fiesta-orange to-fiesta-yellow text-night-900 flex items-center justify-center font-display text-sm font-bold shadow">2</span>
+                    Aus welchem Laden?
+                </label>
+
+                <div class="flex flex-wrap gap-1.5">
+                    <button type="button" onclick="setStore('Egal – Hauptsache schnell! ⚡')" class="text-xs bg-fiesta-lime/15 hover:bg-fiesta-lime/25 text-fiesta-lime border border-fiesta-lime/30 rounded-xl px-3 py-1.5 font-semibold transition active:scale-95">
+                        ⚡ Egal, Hauptsache schnell!
+                    </button>
+                    <button type="button" onclick="setStore('Rewe / Kaufland / Edeka')" class="text-xs bg-night-800 hover:bg-night-700 text-slate-300 border border-white/10 rounded-xl px-2.5 py-1.5 transition active:scale-95">
+                        🛒 Supermarkt (Rewe/Kaufland)
+                    </button>
+                    <button type="button" onclick="setStore('Aral / Shell Tankstelle')" class="text-xs bg-night-800 hover:bg-night-700 text-slate-300 border border-white/10 rounded-xl px-2.5 py-1.5 transition active:scale-95">
+                        ⛽ Tankstelle
+                    </button>
+                    <button type="button" onclick="setStore('McDonald\'s / Burger King / Döner')" class="text-xs bg-night-800 hover:bg-night-700 text-slate-300 border border-white/10 rounded-xl px-2.5 py-1.5 transition active:scale-95">
+                        🍔 McDonald's / BK / Döner
+                    </button>
+                </div>
+
+                <div class="relative">
+                    <i class="fa-solid fa-store absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                    <input 
+                        type="text" 
+                        id="store" 
+                        required
+                        placeholder="z.B. Rewe Holzminden, McDonald's Höxter, Tanke oder 'Egal'"
+                        class="w-full rounded-2xl pl-10 pr-4 py-3 text-sm text-white placeholder-slate-400 glass-input"
+                    >
+                </div>
+
+                <div class="bg-night-900/75 rounded-2xl p-3 border border-white/10 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[11px] font-bold text-slate-200 flex items-center gap-1.5">
+                            <i class="fa-solid fa-rotate text-fiesta-yellow"></i>
+                            Falls ein Artikel im Laden ausverkauft ist:
+                        </span>
+                    </div>
+                    <div class="grid grid-cols-3 gap-1.5">
+                        <button type="button" onclick="setSubstituteRule('🔄 Ähnliche Alternative mitbringen')" id="sub-btn-1" class="p-2 rounded-xl border text-[10px] font-bold transition-all bg-fiesta-orange/20 border-fiesta-yellow text-white">
+                            🔄 Ähnliches holen
+                        </button>
+                        <button type="button" onclick="setSubstituteRule('📱 Kurz per WhatsApp/Anruf fragen')" id="sub-btn-2" class="p-2 rounded-xl border text-[10px] font-semibold transition-all bg-night-800 border-white/10 text-slate-300 hover:text-white">
+                            📱 Kurz nachfragen
+                        </button>
+                        <button type="button" onclick="setSubstituteRule('❌ Artikel einfach weglassen')" id="sub-btn-3" class="p-2 rounded-xl border text-[10px] font-semibold transition-all bg-night-800 border-white/10 text-slate-300 hover:text-white">
+                            ❌ Weglassen
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-2.5 pt-1">
+                <div class="flex items-center justify-between">
+                    <label for="customer-address" class="flex items-center gap-2 text-base font-bold text-white">
+                        <span class="w-7 h-7 rounded-xl bg-gradient-to-br from-fiesta-orange to-fiesta-yellow text-night-900 flex items-center justify-center font-display text-sm font-bold shadow">3</span>
+                        Deine Lieferadresse & Ort
+                    </label>
+                    <button type="button" onclick="toggleVillageModal()" class="text-[11px] font-bold text-fiesta-yellow hover:underline flex items-center gap-1">
+                        <i class="fa-solid fa-map-location-dot"></i> Alle Dörfer & Zonen
+                    </button>
+                </div>
+
+                <!-- Quick village picker chips -->
+                <div class="flex gap-1.5 overflow-x-auto no-scrollbar pb-1">
+                    <button type="button" onclick="quickFillVillage('Holzminden')" class="shrink-0 text-[11px] bg-night-800 hover:bg-night-700 text-emerald-300 border border-white/10 rounded-xl px-2.5 py-1">📍 Holzminden</button>
+                    <button type="button" onclick="quickFillVillage('Höxter')" class="shrink-0 text-[11px] bg-night-800 hover:bg-night-700 text-emerald-300 border border-white/10 rounded-xl px-2.5 py-1">📍 Höxter</button>
+                    <button type="button" onclick="quickFillVillage('Godelheim')" class="shrink-0 text-[11px] bg-night-800 hover:bg-night-700 text-amber-300 border border-white/10 rounded-xl px-2.5 py-1">📍 Godelheim</button>
+                    <button type="button" onclick="quickFillVillage('Heinsen')" class="shrink-0 text-[11px] bg-night-800 hover:bg-night-700 text-amber-300 border border-white/10 rounded-xl px-2.5 py-1">📍 Heinsen</button>
+                    <button type="button" onclick="quickFillVillage('Neuhaus im Solling')" class="shrink-0 text-[11px] bg-night-800 hover:bg-night-700 text-orange-300 border border-white/10 rounded-xl px-2.5 py-1">📍 Neuhaus</button>
+                    <button type="button" onclick="quickFillVillage('Polle')" class="shrink-0 text-[11px] bg-night-800 hover:bg-night-700 text-orange-300 border border-white/10 rounded-xl px-2.5 py-1">📍 Polle</button>
+                    <button type="button" onclick="quickFillVillage('Brakel')" class="shrink-0 text-[11px] bg-night-800 hover:bg-night-700 text-rose-300 border border-white/10 rounded-xl px-2.5 py-1">📍 Brakel</button>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <input 
+                        type="text" 
+                        id="customer-name" 
+                        required
+                        placeholder="Dein Vor- & Nachname"
+                        class="w-full rounded-2xl px-4 py-3 text-sm text-white placeholder-slate-400 glass-input"
+                    >
+                    <input 
+                        type="tel" 
+                        id="customer-phone" 
+                        placeholder="Deine Handynummer (für Rückruf)"
+                        class="w-full rounded-2xl px-4 py-3 text-sm text-white placeholder-slate-400 glass-input"
+                    >
+                </div>
+
+                <div class="relative">
+                    <i class="fa-solid fa-location-dot absolute left-3.5 top-3.5 text-slate-400 text-sm"></i>
+                    <textarea 
+                        id="customer-address" 
+                        rows="2" 
+                        required
+                        oninput="detectAddressZone(this.value)"
+                        placeholder="Straße, Hausnummer, Ort / Dorf (z.B. Hauptstr. 12, Godelheim oder Höxter)"
+                        class="w-full rounded-2xl pl-10 pr-4 py-3 text-sm text-white placeholder-slate-400 glass-input resize-none"
+                    ></textarea>
+                </div>
+
+                <!-- Live Auto-Zone Detection Banner -->
+                <div id="auto-zone-banner" class="rounded-2xl p-3.5 border transition-all flex items-center justify-between gap-3 bg-emerald-500/10 border-emerald-500/30">
+                    <div class="flex items-center gap-3">
+                        <span id="auto-zone-icon" class="text-2xl">🟢</span>
+                        <div>
+                            <div id="auto-zone-title" class="text-xs font-extrabold text-white">Zone 1: Holzminden & Höxter</div>
+                            <div id="auto-zone-desc" class="text-[10px] text-slate-300">Kurze Wege to allen Märkten & Tanken</div>
+                        </div>
+                    </div>
+                    <div class="text-right shrink-0">
+                        <div id="auto-zone-price" class="text-xs font-black text-fiesta-lime">4,90 €</div>
+                        <div id="auto-zone-eta" class="text-[9px] text-slate-400">⏱️ ca. 15–25 Min.</div>
+                    </div>
+                </div>
+
+                <div id="too-far-warning" class="hidden p-3 rounded-2xl bg-rose-500/20 border border-rose-500/40 text-rose-200 text-xs flex items-center gap-2">
+                    <i class="fa-solid fa-triangle-exclamation text-base"></i>
+                    <span><strong>Achtung:</strong> Die Adresse liegt außerhalb unseres regulären 25km-Radius. Wir prüfen die Sonderfahrt nach deiner Bestellung!</span>
+                </div>
+
+                <input 
+                    type="text" 
+                    id="customer-notes" 
+                    placeholder="Wichtiger Klingel-Hinweis (z.B. '2. Etage links, bitte nicht klingeln, Baby schläft')"
+                    class="w-full rounded-2xl px-4 py-3 text-xs text-white placeholder-slate-500 glass-input"
+                >
+
+                <!-- Zone selection manual override (4 zones) -->
+                <div class="grid grid-cols-4 gap-1.5 pt-1">
+                    <button type="button" onclick="selectDeliveryZone(1)" id="zone-btn-1" class="p-2 rounded-xl border text-center transition-all bg-night-800/90 border-white/10 text-slate-300 hover:text-white">
+                        <div class="text-[10px] font-extrabold text-emerald-400">Zone 1</div>
+                        <div class="text-xs font-black text-white" id="zone-1-price-tag">4,90 €</div>
+                    </button>
+                    <button type="button" onclick="selectDeliveryZone(2)" id="zone-btn-2" class="p-2 rounded-xl border text-center transition-all bg-night-800/90 border-white/10 text-slate-300 hover:text-white">
+                        <div class="text-[10px] font-extrabold text-amber-400">Zone 2</div>
+                        <div class="text-xs font-black text-white" id="zone-2-price-tag">6,90 €</div>
+                    </button>
+                    <button type="button" onclick="selectDeliveryZone(3)" id="zone-btn-3" class="p-2 rounded-xl border text-center transition-all bg-night-800/90 border-white/10 text-slate-300 hover:text-white">
+                        <div class="text-[10px] font-extrabold text-orange-400">Zone 3</div>
+                        <div class="text-xs font-black text-white" id="zone-3-price-tag">8,90 €</div>
+                    </button>
+                    <button type="button" onclick="selectDeliveryZone(4)" id="zone-btn-4" class="p-2 rounded-xl border text-center transition-all bg-night-800/90 border-white/10 text-slate-300 hover:text-white">
+                        <div class="text-[10px] font-extrabold text-rose-400">Zone 4</div>
+                        <div class="text-xs font-black text-white" id="zone-4-price-tag">11,90 €</div>
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-night-900/85 rounded-2xl p-4 border border-white/10 space-y-3">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="w-7 h-7 rounded-lg bg-fiesta-yellow/15 border border-fiesta-yellow/30 flex items-center justify-center text-fiesta-yellow text-xs">
+                            <i class="fa-solid fa-calculator"></i>
+                        </span>
+                        <div>
+                            <span class="text-xs font-bold text-white block">Fairer Live-Kosten-Check</span>
+                            <span class="text-[10px] text-slate-400">Was kostet dein Einkauf ca. im Laden?</span>
+                        </div>
+                    </div>
+                    <span class="px-2.5 py-1 rounded-xl bg-fiesta-yellow/15 border border-fiesta-yellow/40 text-xs font-extrabold text-fiesta-yellow" id="calc-total-badge">
+                        Gesamt ca. 21,40 €
+                    </span>
+                </div>
+
+                <input 
+                    type="range" 
+                    id="budget-slider" 
+                    min="5" 
+                    max="80" 
+                    step="1" 
+                    value="15"
+                    oninput="updateBudgetCalculator()"
+                    class="w-full accent-fiesta-orange cursor-pointer h-2 bg-night-700 rounded-lg"
+                >
+
+                <div class="bg-night-800/80 rounded-xl p-2.5 border border-white/5 space-y-1 text-[11px]">
+                    <div class="flex justify-between text-slate-300">
+                        <span>🛒 Ladenpreis (1:1 laut Kassenbon):</span>
+                        <strong class="text-white" id="calc-goods">15,00 €</strong>
+                    </div>
+                    <div class="flex justify-between text-slate-300">
+                        <span>🛵 Anfahrts-Pauschale (<span id="calc-zone-short">Zone 1</span>):</span>
+                        <strong class="text-fiesta-lime" id="fee-display">4,90 €</strong>
+                    </div>
+                    <div class="flex justify-between text-slate-300">
+                        <span>🛍️ Einkaufs- & Vorstreck-Service (10%, max. 5 €):</span>
+                        <strong class="text-amber-300" id="service-fee-display">1,50 €</strong>
+                    </div>
+                </div>
+
+                <div class="pt-1 space-y-2">
+                    <label for="multistop-toggle" class="flex items-center justify-between cursor-pointer text-xs text-slate-200">
+                        <span class="flex items-center gap-2">
+                            <input type="checkbox" id="multistop-toggle" onchange="updateBudgetCalculator()" class="rounded accent-fiesta-yellow w-4 h-4">
+                            <span>🏪 <strong>Kombi-Tour (2 verschiedene Läden)</strong> (+2,50 € Extra-Stopp)</span>
+                        </span>
+                    </label>
+
+                    <div class="flex items-center justify-between">
+                        <label for="turbo-toggle" class="flex items-center gap-2 cursor-pointer text-xs text-slate-200">
+                            <input type="checkbox" id="turbo-toggle" onchange="updateBudgetCalculator()" class="rounded accent-fiesta-orange w-4 h-4">
+                            <span>🔥 <strong>Gonzales-Turbo</strong> (+2,00 € Trinkgeld für Direkt-Sprint)</span>
+                        </label>
+                        <span class="text-[10px] font-bold text-fiesta-lime uppercase">Bar & EC-Karte</span>
+                    </div>
+                </div>
+
+                <div class="pt-2 border-t border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div class="flex items-center gap-2">
+                        <span class="text-[11px] text-slate-300 font-semibold">👯‍♂️ Ihr seid zu mehreren?</span>
+                        <div class="inline-flex rounded-xl bg-night-800 p-0.5 border border-white/10">
+                            <button type="button" onclick="setSplitCount(1)" id="split-1" class="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-fiesta-yellow text-night-900">Alleine</button>
+                            <button type="button" onclick="setSplitCount(2)" id="split-2" class="px-2 py-0.5 rounded-lg text-[10px] font-bold text-slate-300">÷ 2</button>
+                            <button type="button" onclick="setSplitCount(3)" id="split-3" class="px-2 py-0.5 rounded-lg text-[10px] font-bold text-slate-300">÷ 3</button>
+                            <button type="button" onclick="setSplitCount(4)" id="split-4" class="px-2 py-0.5 rounded-lg text-[10px] font-bold text-slate-300">÷ 4</button>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between sm:justify-end gap-2">
+                        <span id="split-result-label" class="text-[11px] font-extrabold text-fiesta-lime">Nur 4,90 € Anfahrt p.P.</span>
+                        <button type="button" onclick="askFriendsViaWhatsApp()" class="text-[10px] font-bold px-2.5 py-1 rounded-lg bg-[#25D366]/15 hover:bg-[#25D366]/25 text-[#25D366] border border-[#25D366]/30 flex items-center gap-1 transition" title="Freunde in WhatsApp-Gruppe fragen">
+                            <i class="fa-brands fa-whatsapp"></i> Freunde fragen
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <button 
+                type="submit" 
+                class="w-full py-4 px-6 rounded-2xl font-display font-bold text-lg text-night-900 bg-gradient-to-r from-fiesta-yellow via-fiesta-orange to-fiesta-pink hover:brightness-110 active:scale-[0.98] transition-all animate-pulse-glow flex items-center justify-center gap-2.5 shadow-xl"
+            >
+                <span>Wunschzettel abschicken</span>
+                <i class="fa-solid fa-paper-plane text-night-900"></i>
+            </button>
+        </form>
+
+        <div class="glass-card rounded-2xl p-4 flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-fiesta-purple to-fiesta-pink flex items-center justify-center text-white text-lg shrink-0 shadow">
+                    <i class="fa-solid fa-mobile-screen-button"></i>
+                </div>
+                <div>
+                    <h3 class="text-xs font-bold text-white">Als App auf deinem Handy speichern</h3>
+                    <p class="text-[11px] text-slate-400">Kein App Store nötig! Beim nächsten Mal mit 1 Klick bestellen.</p>
+                </div>
+            </div>
+            <button onclick="showInstallModal()" class="shrink-0 px-3 py-2 rounded-xl bg-white/10 hover:bg-white/15 text-xs font-bold text-fiesta-yellow transition">
+                So geht's
+            </button>
+        </div>
+    </main>
+
+    <section id="view-tracker" class="hidden max-w-md mx-auto px-4 pt-4 space-y-4">
+        
+        <div class="glass-card rounded-3xl p-5 border border-fiesta-lime/40 shadow-2xl relative overflow-hidden">
+            <div class="flex items-center justify-between mb-3">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-fiesta-lime/15 border border-fiesta-lime/30 text-fiesta-lime text-xs font-extrabold">
+                    <span class="w-2.5 h-2.5 rounded-full bg-fiesta-lime animate-ping"></span>
+                    <span class="w-2.5 h-2.5 rounded-full bg-fiesta-lime -ml-4"></span>
+                    <span id="tracker-live-badge">LIVE-TRACKING AKTIV</span>
+                </div>
+                <span id="tracker-eta-pill" class="text-xs font-black px-3 py-1 rounded-xl bg-fiesta-yellow text-night-900 shadow">
+                    ⏱️ Ankunft: ~22 Min.
+                </span>
+            </div>
+
+            <h2 id="tracker-headline" class="font-display text-2xl font-bold text-white leading-tight">
+                Späti Gonzales ist im Laden & packt deinen Wunschzettel! 🛒💨
+            </h2>
+            <p id="tracker-subline" class="text-xs text-slate-300 mt-1">
+                Zielort: <strong id="tracker-dest-label" class="text-fiesta-yellow">Holzminden / Höxter</strong> • Laden: <strong id="tracker-store-label" class="text-white">Wunsch-Laden</strong>
+            </p>
+
+            <div class="mt-4 relative rounded-2xl overflow-hidden border-2 border-white/15 bg-[#0D1322] h-60 shadow-inner">
+                <svg viewBox="0 0 400 240" class="w-full h-full object-cover">
+                    <defs>
+                        <linearGradient id="weserRiver" x1="0%" y1="100%" x2="100%" y2="0%">
+                            <stop offset="0%" stop-color="#0284C7" stop-opacity="0.35"/>
+                            <stop offset="100%" stop-color="#38BDF8" stop-opacity="0.2"/>
+                        </linearGradient>
+                        <linearGradient id="routeGlow" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stop-color="#FF5E1A"/>
+                            <stop offset="50%" stop-color="#FFB800"/>
+                            <stop offset="100%" stop-color="#00E575"/>
+                        </linearGradient>
+                    </defs>
+
+                    <g stroke="rgba(255,255,255,0.04)" stroke-width="1">
+                        <line x1="0" y1="40" x2="400" y2="40"/><line x1="0" y1="80" x2="400" y2="80"/>
+                        <line x1="0" y1="120" x2="400" y2="120"/><line x1="0" y1="160" x2="400" y2="160"/>
+                        <line x1="0" y1="200" x2="400" y2="200"/>
+                        <line x1="60" y1="0" x2="60" y2="240"/><line x1="130" y1="0" x2="130" y2="240"/>
+                        <line x1="200" y1="0" x2="200" y2="240"/><line x1="270" y1="0" x2="270" y2="240"/>
+                        <line x1="340" y1="0" x2="340" y2="240"/>
+                    </g>
+
+                    <path d="M 15 230 Q 95 190, 130 135 T 230 95 T 365 25" fill="none" stroke="url(#weserRiver)" stroke-width="18" stroke-linecap="round"/>
+                    <path d="M 10 90 Q 110 110, 190 125 T 390 170" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="4"/>
+                    <path d="M 180 10 Q 195 100, 165 235" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="3.5"/>
+
+                    <g fill="rgba(255,255,255,0.3)" font-size="8" font-family="sans-serif" font-weight="bold">
+                        <text x="52" y="55">Polle / Heinsen</text>
+                        <text x="275" y="52">Neuhaus / Solling</text>
+                        <text x="25" y="195">Brakel / Godelheim</text>
+                    </g>
+
+                    <path id="svg-route-bg" d="M 65 155 C 125 155, 145 95, 205 110 C 265 125, 290 80, 335 85" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="6" stroke-linecap="round"/>
+                    <path id="svg-route-active" d="M 65 155 C 125 155, 145 95, 205 110 C 265 125, 290 80, 335 85" fill="none" stroke="url(#routeGlow)" stroke-width="5" stroke-linecap="round" stroke-dasharray="6 6"/>
+
+                    <circle cx="65" cy="155" r="7" fill="#FF5E1A" stroke="#0B0C14" stroke-width="2.5"/>
+                    <text x="65" y="175" text-anchor="middle" fill="#CBD5E1" font-size="9" font-weight="bold">Start</text>
+
+                    <circle cx="205" cy="110" r="8" fill="#FFB800" stroke="#0B0C14" stroke-width="2.5"/>
+                    <text x="205" y="130" text-anchor="middle" fill="#FDE047" font-size="9" font-weight="bold" id="map-store-tag">🏪 Laden</text>
+
+                    <circle cx="335" cy="85" r="14" fill="rgba(0, 229, 117, 0.2)"/>
+                    <circle cx="335" cy="85" r="8" fill="#00E575" stroke="#0B0C14" stroke-width="2.5"/>
+                    <text x="335" y="65" text-anchor="middle" fill="#6EE7B7" font-size="9.5" font-weight="bold" id="map-dest-tag">🛋️ Dein Sofa</text>
+                </svg>
+
+                <div id="gonzales-map-pin" class="absolute transition-all duration-1000 ease-out flex flex-col items-center pointer-events-none" style="left: 48%; top: 32%;">
+                    <div class="px-2 py-0.5 rounded-full bg-fiesta-yellow text-night-900 font-extrabold text-[9px] shadow-lg whitespace-nowrap mb-0.5 flex items-center gap-1">
+                        <span>🏃🏻‍♂️💨 Gonzales</span>
+                        <span id="pin-speed-tag" class="text-[8px] bg-night-900 text-fiesta-lime px-1 rounded">LIVE</span>
+                    </div>
+                    <div class="w-9 h-9 rounded-full bg-gradient-to-br from-fiesta-orange to-fiesta-yellow p-0.5 shadow-[0_0_20px_rgba(255,94,26,0.9)] flex items-center justify-center animate-bounce">
+                        <div class="w-full h-full rounded-full bg-night-900 flex items-center justify-center text-base">
+                            🛵
+                        </div>
+                    </div>
+                </div>
+
+                <div class="absolute bottom-2 left-2 right-2 bg-night-900/90 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/10 flex items-center justify-between text-[10px]">
+                    <span class="text-slate-300 flex items-center gap-1.5">
+                        <i class="fa-solid fa-satellite-dish text-fiesta-lime animate-pulse"></i>
+                        <span id="gps-telemetry-text">GPS-Signal: Verbunden (Weserbergland-Netz)</span>
+                    </span>
+                    <span id="tracker-progress-pct" class="font-mono font-bold text-fiesta-yellow">50%</span>
+                </div>
+            </div>
+
+            <div class="mt-4 grid grid-cols-4 gap-1.5 text-center">
+                <div id="step-card-1" class="p-2 rounded-2xl border border-fiesta-lime bg-fiesta-lime/15 text-white transition-all">
+                    <div class="text-base">📋</div>
+                    <div class="text-[10px] font-extrabold mt-0.5">1. Empfangen</div>
+                    <div class="text-[9px] text-emerald-300">Geht los!</div>
+                </div>
+                <div id="step-card-2" class="p-2 rounded-2xl border border-fiesta-yellow bg-fiesta-yellow/20 text-white transition-all scale-105 shadow-lg">
+                    <div class="text-base">🛒</div>
+                    <div class="text-[10px] font-extrabold mt-0.5">2. Im Laden</div>
+                    <div class="text-[9px] text-fiesta-yellow">Packe ein...</div>
+                </div>
+                <div id="step-card-3" class="p-2 rounded-2xl border border-white/10 bg-night-900/60 text-slate-400 transition-all">
+                    <div class="text-base">🛵💨</div>
+                    <div class="text-[10px] font-bold mt-0.5">3. Auf Tour</div>
+                    <div class="text-[9px]">Unterwegs</div>
+                </div>
+                <div id="step-card-4" class="p-2 rounded-2xl border border-white/10 bg-night-900/60 text-slate-400 transition-all">
+                    <div class="text-base">🔔</div>
+                    <div class="text-[10px] font-bold mt-0.5">4. Da!</div>
+                    <div class="text-[9px]">An der Tür</div>
+                </div>
+            </div>
+
+            <div class="mt-4 pt-3 border-t border-white/10 flex items-center justify-between gap-2">
+                <span class="text-[10px] text-slate-400 font-semibold">Live-Vorschau testen:</span>
+                <div class="flex gap-1">
+                    <button type="button" onclick="setTrackerStage(1)" class="px-2 py-1 rounded-lg bg-night-800 hover:bg-night-700 text-[10px] font-bold text-slate-200 border border-white/10">1. Start</button>
+                    <button type="button" onclick="setTrackerStage(2)" class="px-2 py-1 rounded-lg bg-night-800 hover:bg-night-700 text-[10px] font-bold text-slate-200 border border-white/10">2. Laden</button>
+                    <button type="button" onclick="setTrackerStage(3)" class="px-2 py-1 rounded-lg bg-night-800 hover:bg-night-700 text-[10px] font-bold text-slate-200 border border-white/10">3. Fahrt</button>
+                    <button type="button" onclick="setTrackerStage(4)" class="px-2 py-1 rounded-lg bg-night-800 hover:bg-night-700 text-[10px] font-bold text-slate-200 border border-white/10">4. Da!</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-card rounded-3xl p-4 space-y-3 border border-white/10">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-fiesta-orange to-fiesta-yellow p-0.5 shadow">
+                        <div class="w-full h-full bg-night-900 rounded-[14px] flex items-center justify-center text-lg">
+                            🏃🏻‍♂️
+                        </div>
+                    </div>
+                    <div>
+                        <div class="text-xs font-extrabold text-white">Dein Fahrer: Späti Gonzales</div>
+                        <div class="text-[11px] text-emerald-400 font-semibold flex items-center gap-1">
+                            <i class="fa-solid fa-shield-check"></i> Verifizierter Alles-Besorger
+                        </div>
+                    </div>
+                </div>
+                <button onclick="requestWhatsAppLivePin()" class="px-3 py-2 rounded-xl bg-[#25D366]/20 hover:bg-[#25D366]/30 text-[#25D366] border border-[#25D366]/40 text-xs font-bold flex items-center gap-1.5 transition">
+                    <i class="fa-brands fa-whatsapp text-sm"></i>
+                    <span>Genauen GPS-Pin anfordern</span>
+                </button>
+            </div>
+
+            <div class="bg-night-900/80 rounded-2xl p-3 border border-white/5 text-[11px] text-slate-300 flex items-center justify-between">
+                <span>💡 <strong>Noch was vergessen?</strong> Schreib mir schnell auf WhatsApp, solange ich noch im Laden bin!</span>
+            </div>
+        </div>
+    </section>
+
+    <section id="view-card" class="hidden max-w-md mx-auto px-4 pt-4 space-y-5">
+        <div class="glass-card rounded-3xl p-5 text-center space-y-3">
+            <span class="px-3 py-1 rounded-full bg-fiesta-yellow/15 text-fiesta-yellow text-xs font-bold border border-fiesta-yellow/30">
+                Dein Print- & Flyer-Design
+            </span>
+            <h2 class="font-display text-2xl font-bold text-white">Deine Späti Gonzales Visitenkarte</h2>
+            <p class="text-xs text-slate-300 leading-relaxed">
+                Kunden scannen einfach diesen QR-Code mit ihrer normalen Handykamera und landen <strong>sofort auf deinem Wunschzettel</strong>!
+            </p>
+        </div>
+
+        <div class="space-y-2">
+            <div class="text-xs font-bold text-slate-400 uppercase tracking-wider px-1 flex justify-between">
+                <span>Vorderseite (Design-Vorschau)</span>
+                <span class="text-fiesta-lime">85 x 55 mm</span>
+            </div>
+            <div class="aspect-[1.58/1] w-full rounded-3xl p-6 relative overflow-hidden shadow-2xl border border-white/15 bg-gradient-to-br from-[#16182B] via-[#0E101D] to-[#24122F] flex flex-col justify-between">
+                <div class="absolute -right-10 -top-10 w-40 h-40 rounded-full bg-fiesta-orange/20 blur-2xl"></div>
+                <div class="absolute -left-10 -bottom-10 w-40 h-40 rounded-full bg-fiesta-yellow/15 blur-2xl"></div>
+                
+                <div class="flex items-center justify-between z-10">
+                    <div>
+                        <span class="text-[10px] font-extrabold uppercase tracking-widest text-fiesta-lime block">Dein Alles-Besorger</span>
+                        <h3 class="font-display text-2xl sm:text-3xl font-bold text-white tracking-tight">
+                            Späti <span class="text-fiesta-yellow">Gonzales</span>
+                        </h3>
+                    </div>
+                    <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-fiesta-orange to-fiesta-yellow p-0.5 shadow-lg overflow-hidden">
+                        <div class="w-full h-full bg-night-900 rounded-[14px] flex items-center justify-center overflow-hidden">
+                            <img id="card-mini-logo" src="späti logo.jpg" alt="Logo" class="w-full h-full object-cover hidden" onload="this.classList.remove('hidden'); document.getElementById('card-mini-fallback').classList.add('hidden');">
+                            <span id="card-mini-fallback" class="text-2xl">🏃🏻‍♂️💨</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="z-10 my-auto py-2">
+                    <p class="text-xs sm:text-sm text-slate-200 font-medium leading-snug">
+                        „Du liegst auf dem Sofa. Du schreibst den Wunschzettel.<br>
+                        <span class="text-fiesta-yellow font-bold">Ich besorg’s dir – egal aus welchem Laden!“</span>
+                    </p>
+                </div>
+
+                <div class="flex items-center justify-between text-[10px] text-slate-400 border-t border-white/10 pt-2.5 z-10">
+                    <span>📍 Holzminden & Höxter</span>
+                    <span>🟡 Godelheim & Heinsen</span>
+                    <span>🟠 Solling & Polle</span>
+                    <span>🔥 Brakel</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="space-y-2">
+            <div class="text-xs font-bold text-slate-400 uppercase tracking-wider px-1 flex justify-between">
+                <span>Rückseite (Mit Direkt-QR-Code)</span>
+                <span class="text-fiesta-yellow">Sofort-Scan</span>
+            </div>
+            <div class="aspect-[1.58/1] w-full rounded-3xl p-5 relative overflow-hidden shadow-2xl border border-fiesta-yellow/30 bg-gradient-to-br from-night-800 to-night-900 flex items-center justify-between gap-4">
+                <div class="space-y-2 flex-1">
+                    <div class="inline-block px-2.5 py-0.5 rounded-md bg-fiesta-orange text-night-900 font-extrabold text-[10px] uppercase">
+                        Scannen & Bestellen
+                    </div>
+                    <h4 class="font-display text-lg sm:text-xl font-bold text-white leading-tight">
+                        Wunschzettel öffnen & loslegen!
+                    </h4>
+                    <ol class="text-[11px] text-slate-300 space-y-1 list-decimal list-inside">
+                        <li>QR-Code mit Kamera scannen</li>
+                        <li>Wunsch & Laden eintragen</li>
+                        <li>Abschicken – ich flitze los! 💨</li>
+                    </ol>
+                </div>
+
+                <div class="bg-white p-2.5 rounded-2xl shadow-xl shrink-0 flex flex-col items-center">
+                    <div id="qr-container" class="w-28 h-28 sm:w-32 sm:h-32 flex items-center justify-center"></div>
+                    <span class="text-[9px] font-extrabold text-night-900 uppercase tracking-wider mt-1">spaeti-gonzales.de</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="view-chef" class="hidden max-w-md mx-auto px-4 pt-4 space-y-5">
+        <div class="glass-card rounded-3xl p-5 space-y-4 border border-fiesta-lime/30">
+            <div class="flex items-center gap-3">
+                <div class="w-11 h-11 rounded-2xl bg-fiesta-lime/15 border border-fiesta-lime/40 flex items-center justify-center text-fiesta-lime text-xl">
+                    <i class="fa-solid fa-sliders"></i>
+                </div>
+                <div>
+                    <h2 class="font-display text-xl font-bold text-white">Chef-Menü & Einstellungen</h2>
+                    <p class="text-xs text-slate-400">Hier stellst du deine WhatsApp-Nummer, Zonen-Preise & Live-Tracker ein.</p>
+                </div>
+            </div>
+
+            <div class="space-y-3 pt-2">
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1.5">
+                        Deine WhatsApp-Nummer (für den Direkt-Empfang auf dein Handy)
+                    </label>
+                    <input 
+                        type="tel" 
+                        id="chef-whatsapp" 
+                        placeholder="z.B. 4917612345678 (mit 49 ohne +)"
+                        oninput="saveChefSettings()"
+                        class="w-full rounded-2xl px-4 py-3 text-sm text-white placeholder-slate-500 glass-input"
+                    >
+                </div>
+
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
+                    <div>
+                        <label class="block text-[10px] font-bold text-emerald-300 mb-1">🟢 Zone 1 (Nah)</label>
+                        <input type="text" id="chef-fee-z1" value="4,90" oninput="saveChefSettings()" class="w-full rounded-xl px-2.5 py-2 text-xs text-white glass-input">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-amber-300 mb-1">🟡 Zone 2 (Godelheim)</label>
+                        <input type="text" id="chef-fee-z2" value="6,90" oninput="saveChefSettings()" class="w-full rounded-xl px-2.5 py-2 text-xs text-white glass-input">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-orange-400 mb-1">🟠 Zone 3 (Solling/Polle)</label>
+                        <input type="text" id="chef-fee-z3" value="8,90" oninput="saveChefSettings()" class="w-full rounded-xl px-2.5 py-2 text-xs text-white glass-input">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-rose-400 mb-1">🔥 Zone 4 (Brakel)</label>
+                        <input type="text" id="chef-fee-z4" value="11,90" oninput="saveChefSettings()" class="w-full rounded-xl px-2.5 py-2 text-xs text-white glass-input">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-2">
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-300 mb-1">🟢 Dein Live-Status oben</label>
+                        <input type="text" id="chef-status" value="Späti Gonzales ist wach & startklar!" oninput="saveChefSettings()" class="w-full rounded-xl px-2.5 py-2 text-xs text-white glass-input">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-fiesta-yellow mb-1">🎁 10s-Challenge Gewinn</label>
+                        <input type="text" id="chef-prize" value="1x Eiskalte Gratis-Cola (or 2,00 € Rabatt)" oninput="saveChefSettings()" class="w-full rounded-xl px-2.5 py-2 text-xs text-white glass-input">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-fiesta-orange mb-1">🎯 Timer-Toleranz (Sek.)</label>
+                        <input type="number" step="0.01" id="chef-tolerance" value="0.05" oninput="saveChefSettings()" class="w-full rounded-xl px-2.5 py-2 text-xs text-white glass-input">
+                    </div>
+                </div>
+
+                <div class="pt-3 border-t border-white/10 flex flex-wrap items-center justify-between gap-2">
+                    <div class="text-[11px] text-slate-400">
+                        Stoppuhr testen:
+                    </div>
+                    <div class="flex gap-1.5">
+                        <button type="button" onclick="resetStopwatchForChef()" class="px-3 py-2 rounded-xl bg-fiesta-yellow/15 hover:bg-fiesta-yellow/25 text-fiesta-yellow border border-fiesta-yellow/30 text-xs font-bold transition shrink-0">
+                            <i class="fa-solid fa-rotate-right mr-1"></i> Timer-Reset
+                        </button>
+                    </div>
+                </div>
+
+                <div class="pt-4 border-t border-white/15 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-extrabold text-fiesta-lime uppercase tracking-wider flex items-center gap-1.5">
+                            <i class="fa-solid fa-satellite-dish"></i> Dein Fahrer-Cockpit (Live-Tracker steuern)
+                        </span>
+                        <button type="button" onclick="toggleRealDriverGPS()" id="real-gps-btn" class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/30 transition">
+                            📍 Echtes Handy-GPS starten
+                        </button>
+                    </div>
+
+                    <p class="text-[11px] text-slate-400 leading-relaxed">
+                        Drücke während deiner Tour einfach auf deinen aktuellen Schritt – oder schicke dem Kunden mit 1 Klick deinen <strong>Live-Status direkt auf sein WhatsApp</strong>:
+                    </p>
+
+                    <div class="grid grid-cols-2 gap-2">
+                        <button type="button" onclick="setTrackerStage(1, true)" class="p-2.5 rounded-xl bg-night-900 hover:bg-night-800 border border-white/10 text-left transition">
+                            <div class="text-xs font-bold text-white">1️⃣ 📋 Bestätigt</div>
+                            <div class="text-[10px] text-slate-400">Fahre jetzt zum Laden</div>
+                        </button>
+                        <button type="button" onclick="setTrackerStage(2, true)" class="p-2.5 rounded-xl bg-night-900 hover:bg-night-800 border border-fiesta-yellow/40 text-left transition">
+                            <div class="text-xs font-bold text-fiesta-yellow">2️⃣ 🛒 Im Laden</div>
+                            <div class="text-[10px] text-slate-400">Packe Wunschzettel</div>
+                        </button>
+                        <button type="button" onclick="setTrackerStage(3, true)" class="p-2.5 rounded-xl bg-night-900 hover:bg-night-800 border border-fiesta-orange/40 text-left transition">
+                            <div class="text-xs font-bold text-fiesta-orange">3️⃣ 🛵💨 Auf dem Weg!</div>
+                            <div class="text-[10px] text-slate-400">Komme jetzt zu dir</div>
+                        </button>
+                        <button type="button" onclick="setTrackerStage(4, true)" class="p-2.5 rounded-xl bg-night-900 hover:bg-night-800 border border-fiesta-lime/40 text-left transition">
+                            <div class="text-xs font-bold text-fiesta-lime">4️⃣ 🔔 Vor der Tür!</div>
+                            <div class="text-[10px] text-slate-400">Bin da, kannst rauskommen</div>
+                        </button>
+                    </div>
+
+                    <div id="driver-gps-status" class="hidden text-[11px] font-mono text-emerald-300 bg-night-900/90 p-2.5 rounded-xl border border-emerald-500/30"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div id="order-modal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="glass-card rounded-3xl max-w-md w-full p-6 space-y-4 border border-fiesta-yellow/40 shadow-2xl animate-float">
+            <div class="flex items-center justify-between">
+                <span class="px-3 py-1 rounded-full bg-fiesta-lime/20 text-fiesta-lime text-xs font-extrabold">
+                    ✅ Wunschzettel gepackt!
+                </span>
+                <button onclick="closeOrderModal()" class="w-8 h-8 rounded-full bg-white/10 text-slate-300 hover:text-white flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <h3 class="font-display text-2xl font-bold text-white">Jetzt mit 1 Klick an Späti Gonzales senden!</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+                Dein Wunschzettel ist abflugbereit. Wähle kurz, wie du ihn mir aufs Handy schicken willst:
+            </p>
+
+            <div id="order-preview-text" class="bg-night-900/90 rounded-2xl p-3.5 text-xs text-slate-200 font-mono whitespace-pre-wrap border border-white/10 max-h-48 overflow-y-auto"></div>
+
+            <div class="space-y-2.5 pt-1">
+                <a id="whatsapp-send-link" href="#" target="_blank" onclick="markOrderSent()" class="w-full py-3.5 px-5 rounded-2xl font-display font-bold text-base bg-[#25D366] hover:brightness-110 text-night-900 flex items-center justify-center gap-2 shadow-lg transition">
+                    <i class="fa-brands fa-whatsapp text-xl"></i>
+                    <span>Per WhatsApp abschicken</span>
+                </a>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <a id="sms-send-link" href="#" onclick="markOrderSent()" class="py-3 px-4 rounded-xl font-bold text-xs bg-night-800 hover:bg-night-700 text-white border border-white/10 flex items-center justify-center gap-2 transition">
+                        <i class="fa-solid fa-comment-sms text-fiesta-yellow"></i>
+                        <span>Als SMS senden</span>
+                    </a>
+                    <button type="button" onclick="copyOrderText()" id="copy-order-btn" class="py-3 px-4 rounded-xl font-bold text-xs bg-night-800 hover:bg-night-700 text-white border border-white/10 flex items-center justify-center gap-2 transition">
+                        <i class="fa-solid fa-copy text-fiesta-orange"></i>
+                        <span>Text kopieren</span>
+                    </button>
+                </div>
+
+                <button type="button" onclick="openLiveTrackerAfterOrder()" class="w-full py-3 px-4 rounded-2xl font-bold text-xs bg-fiesta-lime/15 hover:bg-fiesta-lime/25 text-fiesta-lime border border-fiesta-lime/40 flex items-center justify-center gap-2 transition">
+                    <i class="fa-solid fa-location-crosshairs"></i>
+                    <span>Jetzt Live-Radar öffnen & Gonzales verfolgen 🛰️</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="install-modal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="glass-card rounded-3xl max-w-md w-full p-6 space-y-4 border border-white/15 shadow-2xl">
+            <div class="flex items-center justify-between">
+                <h3 class="font-display text-xl font-bold text-white">📱 App auf deinem Handy speichern</h3>
+                <button onclick="closeInstallModal()" class="w-8 h-8 rounded-full bg-white/10 text-slate-300 hover:text-white flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="space-y-3 text-xs text-slate-300">
+                <div class="bg-night-900/80 p-3.5 rounded-2xl border border-white/10 space-y-1.5">
+                    <div class="font-bold text-white flex items-center gap-2">
+                        <i class="fa-brands fa-apple text-lg text-white"></i> Auf dem iPhone (Safari):
+                    </div>
+                    <p>1. Tippe unten in der Mitte auf das <strong>Teilen-Symbol</strong> <i class="fa-solid fa-arrow-up-from-bracket text-fiesta-yellow"></i>.</p>
+                    <p>2. Scrolle leicht runter und tippe auf <strong>„Zum Home-Bildschirm“</strong>.</p>
+                </div>
+
+                <div class="bg-night-900/80 p-3.5 rounded-2xl border border-white/10 space-y-1.5">
+                    <div class="font-bold text-white flex items-center gap-2">
+                        <i class="fa-brands fa-android text-lg text-fiesta-lime"></i> Auf Android (Chrome):
+                    </div>
+                    <p>1. Tippe oben rechts auf die <strong>drei Punkte</strong> <i class="fa-solid fa-ellipsis-vertical text-fiesta-yellow"></i>.</p>
+                    <p>2. Wähle <strong>„App installieren“</strong> oder <strong>„Zum Startbildschirm hinzufügen“</strong>.</p>
+                </div>
+            </div>
+
+            <button onclick="closeInstallModal()" class="w-full py-3 rounded-2xl bg-gradient-to-r from-fiesta-orange to-fiesta-yellow text-night-900 font-bold text-sm">
+                Alles klar, gecheckt! 👍
+            </button>
+        </div>
+    </div>
+
+    <div id="village-modal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="glass-card rounded-3xl max-w-md w-full p-5 space-y-4 border border-white/15 shadow-2xl max-h-[85vh] overflow-y-auto">
+            <div class="flex items-center justify-between sticky top-0 bg-night-800/95 backdrop-blur py-2 px-1 z-10 border-b border-white/10">
+                <h3 class="font-display text-lg font-bold text-white">🗺️ Liefergebiet & Dörfer-Tarife</h3>
+                <button onclick="toggleVillageModal()" class="w-8 h-8 rounded-full bg-white/10 text-slate-300 hover:text-white flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <p class="text-xs text-slate-300">
+                Tippe einfach auf dein Dorf, um es direkt in deine Adresse einzutragen:
+            </p>
+
+            <div class="space-y-3 text-xs">
+                <div class="p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 space-y-1.5">
+                    <div class="font-extrabold text-emerald-300 flex justify-between">
+                        <span>🟢 ZONE 1: City & Nahbereich (ca. 15–25 Min.)</span>
+                        <span>4,90 €</span>
+                    </div>
+                    <p class="text-[11px] text-slate-300 leading-relaxed">
+                        Holzminden, Höxter (Kernstadt), Lüchtringen, Stahle, Albaxen, Boffzen, Bevern, Allersheim, Lütmarsen, Bosseborn, Altendorf.
+                    </p>
+                </div>
+
+                <div class="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/30 space-y-1.5">
+                    <div class="font-extrabold text-amber-300 flex justify-between">
+                        <span>🟡 ZONE 2: Umliegende Dörfer (ca. 25–35 Min.)</span>
+                        <span>6,90 €</span>
+                    </div>
+                    <p class="text-[11px] text-slate-300 leading-relaxed">
+                        <strong>Godelheim</strong>, Ovenhausen, Brenkhausen, Fürstenau, Bödexen, <strong>Heinsen</strong>, Forst, Lauenförde, Meinbrexen, Derental, Fohlenplacken, Mühlenberg, Lobach, Negenborn, Golmbach, Warbsen, Arholzen, Deensen, Heinade, Merxhausen.
+                    </p>
+                </div>
+
+                <div class="p-3 rounded-2xl bg-orange-500/10 border border-orange-500/30 space-y-1.5">
+                    <div class="font-extrabold text-orange-300 flex justify-between">
+                        <span>🟠 ZONE 3: Solling, Wesertal & B64 (ca. 30–45 Min.)</span>
+                        <span>8,90 €</span>
+                    </div>
+                    <p class="text-[11px] text-slate-300 leading-relaxed">
+                        <strong>Neuhaus im Solling</strong>, Silberborn, <strong>Polle</strong>, <strong>Brevörde</strong>, Fürstenberg, <strong>Ottbergen</strong>, Bruchhausen, Hembsen, Beller, Amelunxen, Drenke, Vahlbruch, Meiborssen, Pegestorf, Grave, Dölme, Rühle, Stadtoldendorf, Beverungen, Wehrden, Blankenau.
+                    </p>
+                </div>
+
+                <div class="p-3 rounded-2xl bg-rose-500/10 border border-rose-500/30 space-y-1.5">
+                    <div class="font-extrabold text-rose-300 flex justify-between">
+                        <span>🔥 ZONE 4: Fernstrecke Brakel (ca. 40–55 Min.)</span>
+                        <span>11,90 €</span>
+                    </div>
+                    <p class="text-[11px] text-slate-300 leading-relaxed">
+                        <strong>Brakel</strong>, Erkeln, Bellersen, Bökendorf, Istrup, Schmechten, Rheder, Riesel, Gehrden, Siddessen, Bodenwerder, Ottenstein, Lichtenhagen, Sabbenhausen, Lügde. <em>(Empfohlener Mindesteinkauf: 20 €)</em>
+                    </p>
+                </div>
+            </div>
+
+            <button onclick="toggleVillageModal()" class="w-full py-3 rounded-2xl bg-gradient-to-r from-fiesta-orange to-fiesta-yellow text-night-900 font-bold text-sm">
+                Schließen
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let currentZone = 1;
+        let detectedVillageName = 'Holzminden / Höxter';
+        let isTooFar = false;
+        let currentSubstituteRule = '🔄 Ähnliche Alternative mitbringen';
+        let currentSplitCount = 1;
+
+        function setSubstituteRule(ruleText) {
+            currentSubstituteRule = ruleText;
+            const rules = [
+                '🔄 Ähnliche Alternative mitbringen',
+                '📱 Kurz per WhatsApp/Anruf fragen',
+                '❌ Artikel einfach weglassen'
+            ];
+            rules.forEach((r, idx) => {
+                const btn = document.getElementById('sub-btn-' + (idx + 1));
+                if (!btn) return;
+                if (r === ruleText) {
+                    btn.className = "p-2 rounded-xl border text-[10px] font-bold transition-all bg-fiesta-orange/20 border-fiesta-yellow text-white shadow";
+                } else {
+                    btn.className = "p-2 rounded-xl border text-[10px] font-semibold transition-all bg-night-800 border-white/10 text-slate-300 hover:text-white";
+                }
+            });
+        }
+
+        function setSplitCount(count) {
+            currentSplitCount = count;
+            for (let i = 1; i <= 4; i++) {
+                const btn = document.getElementById('split-' + i);
+                if (!btn) continue;
+                if (i === count) {
+                    btn.className = "px-2 py-0.5 rounded-lg text-[10px] font-bold bg-fiesta-yellow text-night-900 shadow";
+                } else {
+                    btn.className = "px-2 py-0.5 rounded-lg text-[10px] font-bold text-slate-300 hover:text-white";
+                }
+            }
+            updateBudgetCalculator();
+        }
+
+        function askFriendsViaWhatsApp() {
+            const storeVal = document.getElementById('store').value.trim() || 'Späti Gonzales (Alles-Besorger)';
+            const text = encodeURIComponent(`🛵💨 Ich bestelle gerade bei *Späti Gonzales* (aus: ${storeVal})! Braucht noch jemand was vom Supermarkt, Tanke oder Fast Food? Wenn wir zusammen bestellen, teilen wir uns die Liefergebühr! 👇`);
+            window.open(`https://wa.me/?text=${text}`, '_blank');
+        }
+
+        const VILLAGE_DATABASE = [
+            { keys: ['paderborn', 'detmold', 'hameln', 'göttingen', 'goettingen', 'kassel', 'warburg', 'hannover', 'bielefeld', 'einbeck', 'bad pyrmont', 'pyrmont', 'steinheim', 'nieheim', 'marienmünster', 'marienmuenster', 'borgentreich', 'willebadessen', 'bad driburg', 'driburg', 'usseln', 'blomberg', 'horn-bad meinberg', 'schieder'], zone: 5, label: 'Außerhalb (> 25 km)' },
+            { keys: ['brakel', '33034', 'erkeln', 'bellersen', 'bökendorf', 'boekendorf', 'istrup', 'schmechten', 'rheder', 'riesel', 'gehrden', 'siddessen', 'annen', 'bodenwerder', '37619', 'ottenstein', '37647', 'lichtenhagen', 'glesse', 'sabbenhausen', 'lügde', 'luegde', '32676', 'eschershausen', '37632', 'lauenstein', 'bad karlshafen', 'karlshafen'], zone: 4, label: 'Brakel & Fernstrecke' },
+            { keys: ['neuhaus', 'silberborn', 'polle', '37647', 'brevörde', 'brevoerde', 'fürstenberg', 'fuerstenberg', 'ottbergen', 'bruchhausen', 'hembsen', 'beller', 'amelunxen', 'drenke', 'vahlbruch', 'meiborssen', 'pegestorf', 'grave', 'dölme', 'doelme', 'rühle', 'ruehle', 'stadtoldendorf', '37627', 'beverungen', '37688', 'wehrden', 'blankenau', 'dalhausen', 'tietelsen', 'rotgemünden', 'hellental', 'schönhagen', 'schoenhagen', 'sohlingen', 'offensen'], zone: 3, label: 'Solling / Wesertal / B64-Achse' },
+            { keys: ['godelheim', 'ovenhausen', 'brenkhausen', 'fürstenau', 'fuerstenau', 'bödexen', 'boedexen', 'heinsen', 'forst', 'lauenförde', 'lauenfoerde', '37697', 'meinbrexen', 'derental', 'fohlenplacken', 'mühlenberg', 'muehlenberg', 'lobach', 'negenborn', 'golmbach', 'warbsen', 'arholzen', 'deensen', 'heinade', 'merxhausen', 'braak', 'schießhaus', 'schiesshaus', 'reileifzen', 'lüthorst'], zone: 2, label: 'Umland-Dörfer' },
+            { keys: ['holzminden', '37603', 'höxter', 'hoexter', '37671', 'lüchtringen', 'luechtringen', 'stahle', 'albaxen', 'boffzen', '37691', 'bevern', '37639', 'allersheim', 'lütmarsen', 'luetmarsen', 'bosseborn', 'altendorf', 'corvey'], zone: 1, label: 'Holzminden & Höxter' }
+        ];
+
+        function switchTab(tab) {
+            const views = ['app', 'tracker', 'card', 'chef'];
+            views.forEach(v => {
+                const el = document.getElementById('view-' + v);
+                if (el) el.classList.add('hidden');
+                const btn = document.getElementById('tab-' + v);
+                if (btn) {
+                    btn.className = "flex-1 py-2 px-1.5 rounded-xl text-[11px] font-semibold text-slate-300 hover:text-white transition-all flex items-center justify-center gap-1 relative";
+                }
+            });
+
+            const targetView = document.getElementById('view-' + tab);
+            if (targetView) targetView.classList.remove('hidden');
+            const activeBtn = document.getElementById('tab-' + tab);
+            if (activeBtn) {
+                activeBtn.className = "flex-1 py-2 px-1.5 rounded-xl text-[11px] font-bold transition-all flex items-center justify-center gap-1 bg-gradient-to-r from-fiesta-orange to-fiesta-yellow text-night-900 shadow-lg relative";
+            }
+        }
+
+        let currentTrackerStage = 2;
+        let driverWatchId = null;
+
+        function setTrackerStage(stageNum, fromChef = false) {
+            currentTrackerStage = stageNum;
+            const pin = document.getElementById('gonzales-map-pin');
+            const headline = document.getElementById('tracker-headline');
+            const etaPill = document.getElementById('tracker-eta-pill');
+            const pct = document.getElementById('tracker-progress-pct');
+
+            const stages = {
+                1: { left: '12%', top: '46%', title: 'Wunschzettel erhalten! Späti Gonzales startet den Motor 🔑💨', eta: '⏱️ Ankunft: ~30 Min.', pct: '20%' },
+                2: { left: '48%', top: '32%', title: 'Späti Gonzales ist im Laden & packt deinen Wunschzettel! 🛒💨', eta: '⏱️ Ankunft: ~20 Min.', pct: '55%' },
+                3: { left: '68%', top: '22%', title: 'Auf dem Weg zu dir! Deine Sachen sind im Auto 🛵🔥', eta: '⏱️ Ankunft: ~8 Min.', pct: '85%' },
+                4: { left: '80%', top: '16%', title: 'DING DONG! Späti Gonzales steht vor deiner Tür! 🔔🎉', eta: '✅ Angekommen!', pct: '100%' }
+            };
+
+            const s = stages[stageNum] || stages[2];
+            if (pin) { pin.style.left = s.left; pin.style.top = s.top; }
+            if (headline) headline.textContent = s.title;
+            if (etaPill) etaPill.textContent = s.eta;
+            if (pct) pct.textContent = s.pct;
+
+            for (let i = 1; i <= 4; i++) {
+                const card = document.getElementById('step-card-' + i);
+                if (!card) continue;
+                if (i < stageNum) {
+                    card.className = "p-2 rounded-2xl border border-fiesta-lime bg-fiesta-lime/15 text-white transition-all";
+                } else if (i === stageNum) {
+                    card.className = "p-2 rounded-2xl border border-fiesta-yellow bg-fiesta-yellow/25 text-white transition-all scale-105 shadow-lg";
+                } else {
+                    card.className = "p-2 rounded-2xl border border-white/10 bg-night-900/60 text-slate-400 transition-all";
+                }
+            }
+
+            if (fromChef) { switchTab('tracker'); }
+        }
+
+        function openLiveTrackerAfterOrder() {
+            closeOrderModal();
+            const storeVal = document.getElementById('store').value.trim() || 'Wunsch-Laden';
+            const addrVal = document.getElementById('customer-address').value.trim() || 'Bei dir zuhause';
+            document.getElementById('tracker-store-label').textContent = storeVal;
+            document.getElementById('tracker-dest-label').textContent = addrVal;
+            document.getElementById('map-store-tag').textContent = '🏪 ' + storeVal.substring(0, 12);
+            document.getElementById('map-dest-tag').textContent = '🛋️ ' + addrVal.split(',')[0].substring(0, 12);
+            setTrackerStage(1);
+            switchTab('tracker');
+        }
+
+        function requestWhatsAppLivePin() {
+            const chefPhone = (document.getElementById('chef-whatsapp').value || '').replace(/\D/g, '');
+            const msg = encodeURIComponent('Hey Späti Gonzales! 🛵💨 Kannst du mir kurz deinen aktuellen Live-Standort hier bei WhatsApp teilen?');
+            const url = chefPhone ? `https://wa.me/${chefPhone}?text=${msg}` : `https://wa.me/?text=${msg}`;
+            window.open(url, '_blank');
+        }
+
+        function toggleRealDriverGPS() {
+            const statusBox = document.getElementById('driver-gps-status');
+            const btn = document.getElementById('real-gps-btn');
+            if (!navigator.geolocation) {
+                statusBox.classList.remove('hidden');
+                statusBox.textContent = "GPS wird von diesem Browser nicht unterstützt.";
+                return;
+            }
+            if (driverWatchId !== null) {
+                navigator.geolocation.clearWatch(driverWatchId);
+                driverWatchId = null;
+                btn.textContent = "📍 Echtes Handy-GPS starten";
+                statusBox.classList.add('hidden');
+                return;
+            }
+            statusBox.classList.remove('hidden');
+            statusBox.textContent = "🛰️ Suche dein Handy-GPS-Signal...";
+            btn.textContent = "🛑 GPS stoppen";
+
+            driverWatchId = navigator.geolocation.watchPosition(
+                (pos) => {
+                    const lat = pos.coords.latitude.toFixed(4);
+                    const lng = pos.coords.longitude.toFixed(4);
+                    const speedKmH = pos.coords.speed ? Math.round(pos.coords.speed * 3.6) : 0;
+                    statusBox.innerHTML = `✅ <strong>Dein echtes GPS ist aktiv:</strong> ${lat}° N, ${lng}° E (${speedKmH} km/h)`;
+                    document.getElementById('gps-telemetry-text').textContent = `Live-GPS Fahrer: ${lat}°N, ${lng}°E • ${speedKmH > 0 ? speedKmH + ' km/h' : 'Aktiv'}`;
+                },
+                () => { statusBox.textContent = "⚠️ Bitte Standort-Freigabe im Handy-Browser erlauben."; },
+                { enableHighAccuracy: true }
+            );
+        }
+
+        function toggleVillageModal() {
+            document.getElementById('village-modal').classList.toggle('hidden');
+        }
+
+        function getZoneFeeNumber(zoneNum) {
+            if (zoneNum === 5) return 19.90;
+            const defaults = { 1: '4,90', 2: '6,90', 3: '8,90', 4: '11,90' };
+            const inputEl = document.getElementById('chef-fee-z' + zoneNum);
+            const raw = inputEl ? inputEl.value : defaults[zoneNum];
+            const parsed = parseFloat(raw.replace(',', '.'));
+            return isNaN(parsed) ? 4.90 : parsed;
+        }
+
+        function getZoneInfo(zoneNum) {
+            const fee = getZoneFeeNumber(zoneNum).toFixed(2).replace('.', ',') + ' €';
+            if (zoneNum === 1) return { icon: '🟢', title: 'Zone 1: City & Nahbereich', eta: '⏱️ ca. 15–25 Min.', desc: 'Holzminden, Höxter, Lüchtringen, Stahle, Albaxen, Boffzen, Bevern', colorClass: 'bg-emerald-500/10 border-emerald-500/30', fee: fee };
+            if (zoneNum === 2) return { icon: '🟡', title: 'Zone 2: Umliegende Dörfer', eta: '⏱️ ca. 25–35 Min.', desc: 'Godelheim, Heinsen, Ovenhausen, Brenkhausen, Fürstenau, Lauenförde', colorClass: 'bg-amber-500/10 border-amber-500/30', fee: fee };
+            if (zoneNum === 3) return { icon: '🟠', title: 'Zone 3: Solling, Wesertal & B64', eta: '⏱️ ca. 30–45 Min.', desc: 'Neuhaus i.S., Polle, Brevörde, Ottbergen, Bruchhausen, Amelunxen', colorClass: 'bg-orange-500/10 border-orange-500/30', fee: fee };
+            if (zoneNum === 4) return { icon: '🔥', title: 'Zone 4: Fernstrecke Brakel & Umland', eta: '⏱️ ca. 40–55 Min.', desc: 'Brakel, Erkeln, Bökendorf, Istrup, Gehrden, Bodenwerder, Lügde', colorClass: 'bg-rose-500/10 border-rose-500/30', fee: fee };
+            return { icon: '🛑', title: 'Außerhalb des Standard-Gebiets (> 25 km)', eta: '⚠️ Nur auf Anfrage', desc: 'Ort ist sehr weit entfernt – Sonderfahrt nur nach Rücksprache!', colorClass: 'bg-rose-600/20 border-rose-500', fee: 'Anfrage' };
+        }
+
+        function detectAddressZone(addressText) {
+            const lower = addressText.toLowerCase();
+            isTooFar = false;
+            let matchedZone = null;
+            let matchedKeyword = '';
+
+            for (const entry of VILLAGE_DATABASE) {
+                for (const key of entry.keys) {
+                    if (['holzminden', '37603', 'höxter', 'hoexter', '37671'].includes(key)) continue;
+                    if (lower.includes(key)) {
+                        matchedZone = entry.zone;
+                        matchedKeyword = key.charAt(0).toUpperCase() + key.slice(1);
+                        break;
+                    }
+                }
+                if (matchedZone) break;
+            }
+
+            if (!matchedZone) {
+                for (const key of ['holzminden', '37603', 'höxter', 'hoexter', '37671']) {
+                    if (lower.includes(key)) {
+                        matchedZone = 1;
+                        matchedKeyword = key === '37603' ? 'Holzminden' : key === '37671' ? 'Höxter' : (key.charAt(0).toUpperCase() + key.slice(1));
+                        break;
+                    }
+                }
+            }
+
+            if (matchedZone === 5) {
+                isTooFar = true;
+                const warnBox = document.getElementById('too-far-warning');
+                if (warnBox) warnBox.classList.remove('hidden');
+                selectDeliveryZone(4, matchedKeyword + ' (Weitstrecke)');
+            } else if (matchedZone) {
+                const warnBox = document.getElementById('too-far-warning');
+                if (warnBox) warnBox.classList.add('hidden');
+                selectDeliveryZone(matchedZone, `Erkannt: ${matchedKeyword}`);
+            } else {
+                const warnBox = document.getElementById('too-far-warning');
+                if (warnBox) warnBox.classList.add('hidden');
+            }
+        }
+
+        function selectDeliveryZone(zoneNum, reasonText = '') {
+            currentZone = zoneNum;
+            for (let i = 1; i <= 4; i++) {
+                const btn = document.getElementById('zone-btn-' + i);
+                if (!btn) continue;
+                if (i === zoneNum) {
+                    btn.className = "p-2 rounded-xl border text-center transition-all bg-fiesta-orange/20 border-fiesta-yellow text-white shadow scale-[1.02]";
+                } else {
+                    btn.className = "p-2 rounded-xl border text-center transition-all bg-night-800/90 border-white/10 text-slate-300 hover:text-white";
+                }
+            }
+
+            const slider = document.getElementById('budget-slider');
+            if (slider && zoneNum === 4 && parseFloat(slider.value) < 20) {
+                slider.value = 25;
+            }
+
+            const info = getZoneInfo(zoneNum);
+            const banner = document.getElementById('auto-zone-banner');
+            if (banner) {
+                banner.className = `rounded-2xl p-3.5 border transition-all flex items-center justify-between gap-3 ${info.colorClass}`;
+            }
+            
+            const iconEl = document.getElementById('auto-zone-icon');
+            if (iconEl) iconEl.textContent = info.icon;
+            
+            const titleEl = document.getElementById('auto-zone-title');
+            if (titleEl) titleEl.textContent = reasonText ? `${info.title} (${reasonText})` : info.title;
+            
+            const etaEl = document.getElementById('auto-zone-eta');
+            if (etaEl) etaEl.textContent = info.eta;
+            
+            const descEl = document.getElementById('auto-zone-desc');
+            if (descEl) descEl.textContent = info.desc;
+            
+            const priceEl = document.getElementById('auto-zone-price');
+            if (priceEl) priceEl.textContent = info.fee;
+
+            updateBudgetCalculator();
+        }
+
+        function quickFillVillage(villageName) {
+            const addrInput = document.getElementById('customer-address');
+            if (!addrInput) return;
+            const currentVal = addrInput.value.trim();
+            if (!currentVal) {
+                addrInput.value = `${villageName}, `;
+            } else {
+                addrInput.value = `${currentVal.split(',')[0].trim()}, ${villageName}`;
+            }
+            detectAddressZone(addrInput.value);
+            addrInput.focus();
+        }
+
+        let swState = 'idle';
+        let swStartTime = 0;
+        let swAnimFrame = null;
+        let swWonPrize = false;
+        let swWinCode = '';
+
+        function initStopwatch() {
+            const savedAttempt = localStorage.getItem('spaeti_sw_attempt_v1');
+            if (savedAttempt) {
+                try {
+                    const data = JSON.parse(savedAttempt);
+                    swState = 'finished';
+                    swWonPrize = data.won;
+                    swWinCode = data.code || '';
+                    const disp = document.getElementById('stopwatch-display');
+                    if (disp) disp.textContent = data.timeStr;
+                    renderStopwatchFinishedState(data.won, data.timeStr, data.diffStr);
+                } catch (e) {
+                    localStorage.removeItem('spaeti_sw_attempt_v1');
+                }
+            }
+        }
+
+        function handleStopwatchAction() {
+            if (swState === 'idle') {
+                swState = 'running';
+                swStartTime = performance.now();
+                const btn = document.getElementById('stopwatch-btn');
+                const btnText = document.getElementById('stopwatch-btn-text');
+                const btnIcon = document.getElementById('stopwatch-btn-icon');
+                const badge = document.getElementById('challenge-attempt-badge');
+
+                if (btn) btn.className = "w-full sm:w-auto min-w-[145px] py-3.5 px-5 rounded-2xl font-display font-bold text-sm bg-gradient-to-r from-rose-500 to-fiesta-orange text-white shadow-xl active:scale-95 transition-all flex items-center justify-center gap-2 animate-pulse";
+                if (btnIcon) btnIcon.className = "fa-solid fa-hand";
+                if (btnText) btnText.textContent = "STOPP bei 10,00!";
+                if (badge) {
+                    badge.textContent = "🔥 Timer läuft...";
+                    badge.className = "text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-fiesta-orange/20 text-fiesta-yellow border border-fiesta-orange/40";
+                }
+
+                updateStopwatchLoop();
+            } else if (swState === 'running') {
+                cancelAnimationFrame(swAnimFrame);
+                swState = 'finished';
+                const elapsedSec = (performance.now() - swStartTime) / 1000;
+                evaluateStopwatchResult(elapsedSec);
+            }
+        }
+
+        function updateStopwatchLoop() {
+            if (swState !== 'running') return;
+            const elapsedSec = (performance.now() - swStartTime) / 1000;
+
+            if (elapsedSec >= 20.0) {
+                cancelAnimationFrame(swAnimFrame);
+                swState = 'finished';
+                evaluateStopwatchResult(20.0);
+                return;
+            }
+
+            const disp = document.getElementById('stopwatch-display');
+            if (disp) disp.textContent = formatSeconds(elapsedSec);
+            swAnimFrame = requestAnimationFrame(updateStopwatchLoop);
+        }
+
+        function formatSeconds(sec) {
+            const fixed = sec.toFixed(2);
+            const parts = fixed.split('.');
+            const intPart = parts[0].padStart(2, '0');
+            return intPart + ',' + parts[1];
+        }
+
+        function evaluateStopwatchResult(elapsedSec) {
+            const timeStr = formatSeconds(elapsedSec);
+            const disp = document.getElementById('stopwatch-display');
+            if (disp) disp.textContent = timeStr;
+
+            const toleranceInput = document.getElementById('chef-tolerance');
+            const tolerance = toleranceInput ? parseFloat(toleranceInput.value || '0.05') : 0.05;
+            const diff = Math.abs(elapsedSec - 10.0);
+            const diffStr = diff.toFixed(2).replace('.', ',');
+
+            const won = diff <= (tolerance + 0.004);
+            swWonPrize = won;
+
+            if (won) {
+                const randomDigits = Math.floor(100 + Math.random() * 900);
+                swWinCode = 'GONZALES-10-' + randomDigits;
+                const prizeInput = document.getElementById('chef-prize');
+                const prizeName = prizeInput ? prizeInput.value : '1x Gratis-Cola';
+                addQuickItem(`🏆 GEWONNEN (10s-Challenge @ ${timeStr}s): ${prizeName} [Code: ${swWinCode}]`);
+            }
+
+            localStorage.setItem('spaeti_sw_attempt_v1', JSON.stringify({
+                won: won,
+                timeStr: timeStr,
+                diffStr: diffStr,
+                code: swWinCode
+            }));
+
+            renderStopwatchFinishedState(won, timeStr, diffStr);
+        }
+
+        function renderStopwatchFinishedState(won, timeStr, diffStr) {
+            const btn = document.getElementById('stopwatch-btn');
+            const btnText = document.getElementById('stopwatch-btn-text');
+            const btnIcon = document.getElementById('stopwatch-btn-icon');
+            const badge = document.getElementById('challenge-attempt-badge');
+            const resultBox = document.getElementById('stopwatch-result-box');
+            const display = document.getElementById('stopwatch-display');
+
+            if (btn) btn.disabled = true;
+            if (resultBox) resultBox.classList.remove('hidden');
+
+            if (won) {
+                if (display) display.className = "font-mono text-3xl sm:text-4xl font-black tracking-wider text-fiesta-lime drop-shadow-[0_0_20px_rgba(0,229,117,0.7)]";
+                if (btn) btn.className = "w-full sm:w-auto min-w-[145px] py-3.5 px-5 rounded-2xl font-display font-bold text-sm bg-fiesta-lime/20 text-fiesta-lime border border-fiesta-lime/40 flex items-center justify-center gap-2 cursor-not-allowed";
+                if (btnIcon) btnIcon.className = "fa-solid fa-trophy";
+                if (btnText) btnText.textContent = "GEKNACKT!";
+                if (badge) {
+                    badge.textContent = "🏆 Gewinner!";
+                    badge.className = "text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-fiesta-lime/20 text-fiesta-lime border border-fiesta-lime/40";
+                }
+
+                const prizeInput = document.getElementById('chef-prize');
+                const prizeName = prizeInput ? prizeInput.value : '1x Gratis-Cola';
+                if (resultBox) {
+                    resultBox.className = "mt-3 p-3.5 rounded-2xl text-xs font-bold text-center bg-emerald-500/15 border border-emerald-400/40 text-emerald-200";
+                    resultBox.innerHTML = `🎉 <strong>WAHNSINN! Gestoppt bei ${timeStr} Sek.!</strong><br>Dein Gewinn (<strong>${prizeName}</strong>) wurde direkt unten in deinen Wunschzettel gelegt!`;
+                }
+            } else {
+                if (display) display.className = "font-mono text-3xl sm:text-4xl font-black tracking-wider text-fiesta-orange";
+                if (btn) btn.className = "w-full sm:w-auto min-w-[145px] py-3.5 px-5 rounded-2xl font-display font-bold text-xs bg-white/5 text-slate-400 border border-white/10 flex items-center justify-center gap-2 cursor-not-allowed";
+                if (btnIcon) btnIcon.className = "fa-solid fa-lock";
+                if (btnText) btnText.textContent = "Versuch genutzt";
+                if (badge) {
+                    badge.textContent = "✅ Gespielt";
+                    badge.className = "text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-white/10 text-slate-400 border border-white/10";
+                }
+
+                if (resultBox) {
+                    resultBox.className = "mt-3 p-3 rounded-2xl text-xs font-semibold text-center bg-white/5 border border-white/10 text-slate-300";
+                    resultBox.innerHTML = `😮 <strong>So knapp!</strong> Du warst nur <strong>${diffStr} Sek.</strong> von der 10,00 entfernt! Bei deiner nächsten Bestellung hast du wieder einen neuen Versuch!`;
+                }
+            }
+        }
+
+        function resetStopwatchForChef() {
+            localStorage.removeItem('spaeti_sw_attempt_v1');
+            swState = 'idle';
+            swWonPrize = false;
+            swWinCode = '';
+
+            const display = document.getElementById('stopwatch-display');
+            const btn = document.getElementById('stopwatch-btn');
+            const btnText = document.getElementById('stopwatch-btn-text');
+            const btnIcon = document.getElementById('stopwatch-btn-icon');
+            const badge = document.getElementById('challenge-attempt-badge');
+            const resultBox = document.getElementById('stopwatch-result-box');
+
+            if (display) {
+                display.textContent = "00,00";
+                display.className = "font-mono text-3xl sm:text-4xl font-black tracking-wider text-fiesta-yellow drop-shadow-[0_0_15px_rgba(255,184,0,0.45)]";
+            }
+            if (btn) {
+                btn.disabled = false;
+                btn.className = "w-full sm:w-auto min-w-[145px] py-3.5 px-5 rounded-2xl font-display font-bold text-sm bg-gradient-to-r from-fiesta-lime to-emerald-400 text-night-900 shadow-xl hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-2";
+            }
+            if (btnIcon) btnIcon.className = "fa-solid fa-play";
+            if (btnText) btnText.textContent = "Timer starten!";
+            if (badge) {
+                badge.textContent = "🎯 1 Versuch frei";
+                badge.className = "text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-white/10 text-slate-300 border border-white/10";
+            }
+            if (resultBox) resultBox.classList.add('hidden');
+
+            switchTab('app');
+        }
+
+        function addQuickItem(itemText) {
+            const wl = document.getElementById('wishlist');
+            if (!wl) return;
+            const current = wl.value.trim();
+            wl.value = current ? current + '\n- ' + itemText : '- ' + itemText;
+            const clearBtn = document.getElementById('clear-btn');
+            if (clearBtn) clearBtn.classList.remove('hidden');
+        }
+
+        function clearWishlist() {
+            const wl = document.getElementById('wishlist');
+            if (wl) wl.value = '';
+            const clearBtn = document.getElementById('clear-btn');
+            if (clearBtn) clearBtn.classList.add('hidden');
+        }
+
+        function setStore(storeName) {
+            const storeInput = document.getElementById('store');
+            if (storeInput) storeInput.value = storeName;
+        }
+
+        function toggleVoiceDictation() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const btnText = document.getElementById('voice-btn-text');
+            if (!SpeechRecognition) {
+                if (btnText) btnText.textContent = "Mikro im Browser nicht aktiv";
+                setTimeout(() => { if (btnText) btnText.textContent = "Einsprechen statt tippen"; }, 2500);
+                return;
+            }
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'de-DE';
+            recognition.onstart = () => { if (btnText) btnText.textContent = "🔴 Ich höre zu... Sprich jetzt!"; };
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                addQuickItem(transcript);
+            };
+            recognition.onend = () => { if (btnText) btnText.textContent = "Einsprechen statt tippen"; };
+            recognition.start();
+        }
+
+        function updateBudgetCalculator() {
+            const slider = document.getElementById('budget-slider');
+            const goods = slider ? parseFloat(slider.value || '15') : 15;
+            const feeNum = getZoneFeeNumber(currentZone);
+            const feeFormatted = feeNum.toFixed(2).replace('.', ',') + ' €';
+
+            const rawService = goods * 0.10;
+            const serviceFee = Math.min(5.00, Math.max(1.50, rawService));
+            const serviceFormatted = serviceFee.toFixed(2).replace('.', ',') + ' €';
+
+            for (let i = 1; i <= 4; i++) {
+                const tag = document.getElementById(`zone-${i}-price-tag`);
+                if (tag) tag.textContent = getZoneFeeNumber(i).toFixed(2).replace('.', ',') + ' €';
+            }
+
+            const multistopToggle = document.getElementById('multistop-toggle');
+            const turboToggle = document.getElementById('turbo-toggle');
+            const multistop = multistopToggle && multistopToggle.checked ? 2.50 : 0.00;
+            const turbo = turboToggle && turboToggle.checked ? 2.00 : 0.00;
+
+            const total = Math.max(goods, goods + feeNum + serviceFee + multistop + turbo);
+            
+            const zoneShort = document.getElementById('calc-zone-short');
+            if (zoneShort) zoneShort.textContent = `Zone ${currentZone}`;
+            
+            const feeDisplay = document.getElementById('fee-display');
+            if (feeDisplay) feeDisplay.textContent = feeFormatted;
+            
+            const serviceFeeDisplay = document.getElementById('service-fee-display');
+            if (serviceFeeDisplay) serviceFeeDisplay.textContent = serviceFormatted;
+            
+            const calcGoods = document.getElementById('calc-goods');
+            if (calcGoods) calcGoods.textContent = goods.toFixed(2).replace('.', ',') + ' €';
+            
+            const calcTotalBadge = document.getElementById('calc-total-badge');
+            if (calcTotalBadge) calcTotalBadge.textContent = 'Gesamt ca. ' + total.toFixed(2).replace('.', ',') + ' €';
+            
+            const autoPrice = document.getElementById('auto-zone-price');
+            if (autoPrice) autoPrice.textContent = feeFormatted;
+
+            const splitLabel = document.getElementById('split-result-label');
+            if (splitLabel) {
+                const effectiveDelivery = Math.max(0, (feeNum + serviceFee + multistop)) / currentSplitCount;
+                const perPersonStr = effectiveDelivery.toFixed(2).replace('.', ',');
+                splitLabel.textContent = currentSplitCount === 1 
+                    ? `Gebühr komplett: ${(feeNum + serviceFee).toFixed(2).replace('.', ',')} €`
+                    : `Nur ${perPersonStr} € Gebühr p.P.!`;
+            }
+        }
+
+        function handleCustomLogoUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const dataUrl = e.target.result;
+                localStorage.setItem('spaeti_custom_logo', dataUrl);
+                applyCustomLogo(dataUrl);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function applyCustomLogo(dataUrl) {
+            const heroImg = document.getElementById('custom-user-logo-img');
+            const heroSvg = document.getElementById('custom-user-logo-svg');
+            const cardImg = document.getElementById('card-mini-logo');
+            const cardFallback = document.getElementById('card-mini-fallback');
+
+            if (heroImg && heroSvg) {
+                heroImg.src = dataUrl;
+                heroImg.classList.remove('hidden');
+                heroSvg.classList.add('hidden');
+            }
+            if (cardImg && cardFallback) {
+                cardImg.src = dataUrl;
+                cardImg.classList.remove('hidden');
+                cardFallback.classList.add('hidden');
+            }
+        }
+
+        let lastGeneratedOrderText = '';
+
+        function handleOrderSubmit(e) {
+            e.preventDefault();
+            const wishlist = document.getElementById('wishlist').value.trim();
+            const store = document.getElementById('store').value.trim();
+            const name = document.getElementById('customer-name').value.trim();
+            const phone = document.getElementById('customer-phone').value.trim();
+            const address = document.getElementById('customer-address').value.trim();
+            const notes = document.getElementById('customer-notes').value.trim();
+            const multistop = document.getElementById('multistop-toggle').checked;
+            const turbo = document.getElementById('turbo-toggle').checked;
+
+            const info = getZoneInfo(currentZone);
+            const slider = document.getElementById('budget-slider');
+            const goods = slider ? parseFloat(slider.value || '15') : 15;
+            const serviceFee = Math.min(5.00, Math.max(1.50, goods * 0.10)).toFixed(2).replace('.', ',') + ' €';
+
+            let msg = `🌵 *NEUER SPÄTI GONZALES WUNSCHZETTEL* 💨\n\n`;
+            msg += `📝 *Wunschzettel:*\n${wishlist}\n\n`;
+            msg += `🏪 *Wunsch-Laden:* ${store}\n`;
+            msg += `🔄 *Falls was ausverkauft ist:* ${currentSubstituteRule}\n`;
+            msg += `🛵 *Tarif-Zone:* ${info.title} (${info.fee} Anfahrt + 10% Einkaufs-Service ca. ${serviceFee})\n`;
+            msg += `⏱️ *Richtzeit:* ${info.eta}\n`;
+            if (isTooFar) {
+                msg += `⚠️ *ACHTUNG:* Adresse liegt außerhalb des 25km-Radius (Sonderfahrt-Anfrage!)\n`;
+            }
+            if (multistop) {
+                msg += `➕ *Kombi-Tour (2 Läden):* JA (+2,50 €)\n`;
+            }
+            if (turbo) {
+                msg += `🔥 *GONZALES-TURBO:* JA (+2,00 € Direkt-Sprint)\n`;
+            }
+            if (swWonPrize && swWinCode) {
+                msg += `🏆 *10s-Challenge geknackt:* Code ${swWinCode}\n`;
+            }
+            msg += `\n📍 *Lieferadresse:*\n${name}\n${address}\n`;
+            if (phone) msg += `📞 Rückruf: ${phone}\n`;
+            if (notes) msg += `🔔 Hinweis: ${notes}\n`;
+
+            lastGeneratedOrderText = msg;
+            const previewText = document.getElementById('order-preview-text');
+            if (previewText) previewText.textContent = msg;
+
+            const chefWhatsappEl = document.getElementById('chef-whatsapp');
+            const chefPhone = chefWhatsappEl ? chefWhatsappEl.value.replace(/\D/g, '') : '';
+            const encodedMsg = encodeURIComponent(msg);
+
+            const waUrl = chefPhone 
+                ? `https://wa.me/${chefPhone}?text=${encodedMsg}`
+                : `https://wa.me/?text=${encodedMsg}`;
+            const smsUrl = chefPhone
+                ? `sms:${chefPhone}?body=${encodedMsg}`
+                : `sms:?body=${encodedMsg}`;
+
+            const waLink = document.getElementById('whatsapp-send-link');
+            const smsLink = document.getElementById('sms-send-link');
+            if (waLink) waLink.href = waUrl;
+            if (smsLink) smsLink.href = smsUrl;
+            
+            const orderModal = document.getElementById('order-modal');
+            if (orderModal) orderModal.classList.remove('hidden');
+        }
+
+        function closeOrderModal() {
+            const orderModal = document.getElementById('order-modal');
+            if (orderModal) orderModal.classList.add('hidden');
+        }
+
+        function markOrderSent() {
+            localStorage.removeItem('spaeti_sw_attempt_v1');
+            setTimeout(() => {
+                openLiveTrackerAfterOrder();
+            }, 600);
+        }
+
+        function copyOrderText() {
+            const temp = document.createElement('textarea');
+            temp.value = lastGeneratedOrderText;
+            document.body.appendChild(temp);
+            temp.select();
+            document.execCommand('copy');
+            document.body.removeChild(temp);
+
+            const btn = document.getElementById('copy-order-btn');
+            if (btn) {
+                btn.innerHTML = `<i class="fa-solid fa-check text-fiesta-lime"></i> <span>Kopiert!</span>`;
+                setTimeout(() => {
+                    btn.innerHTML = `<i class="fa-solid fa-copy text-fiesta-orange"></i> <span>Text kopieren</span>`;
+                }, 2000);
+            }
+        }
+
+        function saveChefSettings() {
+            const settings = {
+                whatsapp: document.getElementById('chef-whatsapp') ? document.getElementById('chef-whatsapp').value : '',
+                feeZ1: document.getElementById('chef-fee-z1') ? document.getElementById('chef-fee-z1').value : '4,90',
+                feeZ2: document.getElementById('chef-fee-z2') ? document.getElementById('chef-fee-z2').value : '6,90',
+                feeZ3: document.getElementById('chef-fee-z3') ? document.getElementById('chef-fee-z3').value : '8,90',
+                feeZ4: document.getElementById('chef-fee-z4') ? document.getElementById('chef-fee-z4').value : '11,90',
+                status: document.getElementById('chef-status') ? document.getElementById('chef-status').value : '',
+                prize: document.getElementById('chef-prize') ? document.getElementById('chef-prize').value : '',
+                tolerance: document.getElementById('chef-tolerance') ? document.getElementById('chef-tolerance').value : '0.05'
+            };
+            localStorage.setItem('spaeti_chef_settings_v3', JSON.stringify(settings));
+            applyChefSettings(settings);
+        }
+
+        function applyChefSettings(s) {
+            const badgeText = document.getElementById('status-badge-text');
+            if (s.status && badgeText) badgeText.textContent = s.status;
+            
+            const prizeText = document.getElementById('challenge-prize-text');
+            if (s.prize && prizeText) prizeText.textContent = s.prize;
+            
+            selectDeliveryZone(currentZone);
+        }
+
+        function showInstallModal() {
+            const m = document.getElementById('install-modal');
+            if (m) m.classList.remove('hidden');
+        }
+        function closeInstallModal() {
+            const m = document.getElementById('install-modal');
+            if (m) m.classList.add('hidden');
+        }
+
+        function renderVisitenkarteQR() {
+            const container = document.getElementById('qr-container');
+            if (!container) return;
+            const currentUrl = encodeURIComponent(window.location.href || 'https://spaeti-gonzales.de');
+            container.innerHTML = `
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${currentUrl}&color=0B0C14&bgcolor=FFFFFF&margin=2" 
+                     alt="Späti Gonzales QR Code" 
+                     class="w-full h-full object-contain rounded-lg"
+                     onerror="this.style.display='none'">
+            `;
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedLogo = localStorage.getItem('spaeti_custom_logo');
+            if (savedLogo) applyCustomLogo(savedLogo);
+
+            const savedChef = localStorage.getItem('spaeti_chef_settings_v3');
+            if (savedChef) {
+                try {
+                    const parsed = JSON.parse(savedChef);
+                    if (parsed.whatsapp && document.getElementById('chef-whatsapp')) document.getElementById('chef-whatsapp').value = parsed.whatsapp;
+                    if (parsed.feeZ1 && document.getElementById('chef-fee-z1')) document.getElementById('chef-fee-z1').value = parsed.feeZ1;
+                    if (parsed.feeZ2 && document.getElementById('chef-fee-z2')) document.getElementById('chef-fee-z2').value = parsed.feeZ2;
+                    if (parsed.feeZ3 && document.getElementById('chef-fee-z3')) document.getElementById('chef-fee-z3').value = parsed.feeZ3;
+                    if (parsed.feeZ4 && document.getElementById('chef-fee-z4')) document.getElementById('chef-fee-z4').value = parsed.feeZ4;
+                    if (parsed.status && document.getElementById('chef-status')) document.getElementById('chef-status').value = parsed.status;
+                    if (parsed.prize && document.getElementById('chef-prize')) document.getElementById('chef-prize').value = parsed.prize;
+                    if (parsed.tolerance && document.getElementById('chef-tolerance')) document.getElementById('chef-tolerance').value = parsed.tolerance;
+                    applyChefSettings(parsed);
+                } catch (e) {}
+            }
+
+            initStopwatch();
+            selectDeliveryZone(1);
+            renderVisitenkarteQR();
+
+            const wl = document.getElementById('wishlist');
+            if (wl) {
+                wl.addEventListener('input', () => {
+                    const clearBtn = document.getElementById('clear-btn');
+                    if (clearBtn) clearBtn.classList.toggle('hidden', wl.value.trim() === '');
+                });
+            }
+        });
+    </script>
+</body>
+</html>
